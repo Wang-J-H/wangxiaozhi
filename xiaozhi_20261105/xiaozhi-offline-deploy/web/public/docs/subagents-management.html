@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子智能体 - Xiaozhi (小智)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .content h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .content h4 {
+            color: #444;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .content ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .pager a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .pager a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>子智能体</h1>
+            <p>基于 Agent-backed 的子智能体系统</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="project-overview.html">项目简介</a></li>
+                <li><a href="model-config.html">模型配置</a></li>
+                <li><a href="knowledge-base.html">知识库</a></li>
+                <li><a href="agents-config.html">智能体开发</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <h2>子智能体</h2>
+            <p>Xiaozhi 的子智能体是 Agent-backed 形态：它仍然是 <code>agents</code> 表中的一级 Agent，只是额外带有 <code>is_subagent=true</code> 标记，并使用专用后端 <code>SubAgentBackend</code>。子智能体不再有独立的创建入口、独立表或独立管理接口。</p>
+
+            <h3>用户视角</h3>
+
+            <h4>子智能体能解决什么问题</h4>
+            <p>当任务复杂、需要分工处理时，主 Agent 可以通过 <code>task</code> 工具把一个子任务交给子智能体。例如：</p>
+            <ul>
+                <li>通用型子任务：交给内置 <code>general-purpose</code> 子智能体</li>
+                <li>研究型子任务：聚焦检索和资料整理</li>
+                <li>评审型子任务：对草稿进行结构和质量审查</li>
+                <li>领域型子任务：使用指定模型、工具、知识库或 Skills 处理特定领域问题</li>
+            </ul>
+
+            <h4>在哪里创建和编辑</h4>
+            <p>子智能体与普通 Agent 使用同一个管理入口：进入模型配置中的"智能体"管理页，点击新增智能体，并在后端类型中选择 <code>SubAgentBackend</code>。</p>
+            <p>子智能体不会出现在聊天页的 Agent 快速切换列表中，也不能再配置或调用其他子智能体。</p>
+
+            <h4>如何让主 Agent 调用子智能体</h4>
+            <p>主 Agent 会通过 runtime config 的"子智能体"字段确定 <code>task</code> 工具可调用的子智能体范围。</p>
+            <ul>
+                <li>未选择或保存空列表时，默认启用当前用户可见的全部子智能体</li>
+                <li>显式选择后，只允许调用所选子智能体</li>
+                <li>每个子智能体使用自己的 <code>config_json.context</code></li>
+            </ul>
+
+            <h3>开发者视角</h3>
+
+            <h4>数据模型</h4>
+            <table>
+                <tr><th>字段</th><th>说明</th></tr>
+                <tr><td><code>backend_id</code></td><td>子智能体固定使用 <code>SubAgentBackend</code></td></tr>
+                <tr><td><code>is_subagent</code></td><td>子智能体标记，<code>SubAgentBackend</code> 必须对应 <code>true</code></td></tr>
+                <tr><td><code>config_json.context</code></td><td>子智能体自己的运行配置</td></tr>
+                <tr><td><code>share_config</code></td><td>可见性与管理权限，沿用 Agent 共享模型</td></tr>
+            </table>
+
+            <h4>API 与列表语义</h4>
+            <ul>
+                <li><code>GET /api/agent</code> 默认只返回聊天可用的普通 Agent</li>
+                <li><code>GET /api/agent?include_subagents=true</code> 返回管理页需要的完整 Agent 列表</li>
+                <li>创建或更新 <code>SubAgentBackend</code> 时，payload 会携带或推导 <code>is_subagent=true</code></li>
+            </ul>
+
+            <h4>运行时调用链</h4>
+            <p>主 Agent 构图时，会先把 <code>context.subagents</code> 归一化为当前用户可见的允许列表；允许列表非空时挂载 Xiaozhi 的 task middleware。middleware 会把允许的子智能体列表注入模型提示，并暴露一个 <code>task</code> 工具。</p>
+
+            <p>工具参数为：</p>
+            <pre><code>class TaskToolSchema(BaseModel):
+    description: str
+    subagent_slug: str
+    thread_id: str | None = None</code></pre>
+
+            <p><code>thread_id</code> 是可选的子智能体线程 ID。新任务不需要填写；如果要继续之前同一个子智能体任务，应使用上一次 <code>task</code> 工具结果中的 <code>子智能体线程 ID</code>。</p>
+
+            <h4>同步调用与异步调用</h4>
+            <p><code>task</code> 是同步工具：父智能体调用后会阻塞等待子智能体 run 走到终态。当子任务耗时较长或可以并行多个时，可使用异步子智能体生命周期工具：</p>
+
+            <table>
+                <tr><th>工具</th><th>作用</th><th>关键参数</th></tr>
+                <tr><td><code>subagent_start</code></td><td>异步启动子智能体 run，立即返回 <code>run_id</code> 和 <code>thread_id</code></td><td><code>description</code>、<code>subagent_slug</code>、可选 <code>thread_id</code></td></tr>
+                <tr><td><code>subagent_status</code></td><td>按 <code>run_id</code> 查询状态，附带最近 3 条可读进度摘要</td><td><code>run_id</code></td></tr>
+                <tr><td><code>subagent_cancel</code></td><td>取消运行中的子智能体 run</td><td><code>run_id</code></td></tr>
+                <tr><td><code>subagent_await</code></td><td>阻塞等待子智能体 run 终态并返回最终结果</td><td><code>run_id</code></td></tr>
+            </table>
+
+            <h4>文件系统与沙盒作用域</h4>
+            <table>
+                <tr><th>路径/作用域</th><th>普通 Agent</th><th>子智能体</th></tr>
+                <tr><td>LangGraph checkpoint</td><td>当前 <code>thread_id</code></td><td>child <code>thread_id</code></td></tr>
+                <tr><td><code>/home/gem/user-data/workspace</code></td><td>当前 <code>uid</code> 的共享工作区</td><td>同一 <code>uid</code> 的共享工作区</td></tr>
+                <tr><td><code>/home/gem/user-data/uploads</code></td><td>当前会话文件作用域</td><td>父会话 <code>file_thread_id</code></td></tr>
+                <tr><td><code>/home/gem/user-data/outputs</code></td><td>当前会话文件作用域</td><td>父会话 <code>file_thread_id</code></td></tr>
+                <tr><td><code>/home/gem/skills</code></td><td>当前 Agent 的 Skills 作用域</td><td>子智能体自己的 <code>skills_thread_id</code></td></tr>
+            </table>
+            <p>这保证子智能体可以读取父会话上传、产物也会回到父会话 artifacts 中，同时子智能体的 Skills 不会污染主 Agent。</p>
+        </div>
+        
+        <div class="pager">
+            <a href="skills-management.html">上一页：Skills 管理</a>
+            <a href="langfuse-integration.html">下一页：Langfuse 集成</a>
+        </div>
+    </div>
+</body>
+</html>

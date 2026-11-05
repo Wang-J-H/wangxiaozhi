@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档处理与 OCR - Xiaozhi (小智)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .content h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .content h4 {
+            color: #444;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content ul, .content ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .content ul li, .content ol li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .pager a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .pager a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>文档处理与 OCR</h1>
+            <p>多格式文档智能解析</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="project-overview.html">项目简介</a></li>
+                <li><a href="model-config.html">模型配置</a></li>
+                <li><a href="knowledge-base.html">知识库</a></li>
+                <li><a href="agents-config.html">智能体开发</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <h2>文档处理与 OCR</h2>
+            <p>Xiaozhi 支持多种文档格式的智能解析，从简单的文本文件到复杂的 PDF 文档，都能自动提取内容并转换为可检索的格式。</p>
+
+            <h3>支持的文件类型</h3>
+
+            <h4>常规文档</h4>
+            <table>
+                <thead>
+                    <tr><th>类型</th><th>格式</th><th>说明</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>文本</td><td>.txt, .md, .html, .htm</td><td>直接提取内容</td></tr>
+                    <tr><td>Word</td><td>.docx</td><td>保留格式和结构</td></tr>
+                    <tr><td>PowerPoint</td><td>.pptx</td><td>保留主要文本结构</td></tr>
+                    <tr><td>PDF</td><td>.pdf</td><td>支持文本和图片 PDF</td></tr>
+                    <tr><td>表格</td><td>.csv, .xls, .xlsx</td><td>识别表格结构</td></tr>
+                    <tr><td>JSON</td><td>.json</td><td>结构化数据</td></tr>
+                </tbody>
+            </table>
+
+            <h4>图片文件</h4>
+            <p>对于图片文件，需要启用 OCR 才能提取文字：.jpg, .jpeg, .png, .bmp, .tiff, .tif</p>
+
+            <h4>压缩包</h4>
+            <p>支持上传 ZIP 压缩包，系统会：</p>
+            <ul>
+                <li>自动提取并处理其中的 Markdown 文件</li>
+                <li>处理图片并上传到对象存储</li>
+                <li>智能识别 <code>full.md</code> 或第一个 <code>.md</code> 文件</li>
+            </ul>
+
+            <h4>网页内容</h4>
+            <p>支持通过 URL 直接抓取网页内容：</p>
+            <ol>
+                <li>配置 <code>XIAOZHI_URL_WHITELIST</code> 环境变量启用白名单机制</li>
+                <li>系统自动将 HTML 转换为 Markdown</li>
+                <li>内置去重机制，避免重复抓取</li>
+            </ol>
+
+            <div class="info-box">
+                <p><strong>URL 白名单配置</strong>：示例：<code>XIAOZHI_URL_WHITELIST=github.com,*.wikipedia.org,docs.python.org</code></p>
+            </div>
+
+            <h3>OCR 方案选择</h3>
+            <p>系统提供多种 OCR 方案，适用于不同场景：</p>
+
+            <h4>方案对比</h4>
+            <table>
+                <thead>
+                    <tr><th>方案</th><th>适用场景</th><th>硬件要求</th><th>特点</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>RapidOCR</td><td>基础文字识别</td><td>CPU</td><td>免费开源，速度快</td></tr>
+                    <tr><td>MinerU</td><td>复杂 PDF、表格</td><td>GPU</td><td>精度高，版面分析好</td></tr>
+                    <tr><td>MinerU Official</td><td>复杂文档</td><td>无</td><td>官方云服务，开箱即用</td></tr>
+                    <tr><td>PP-Structure-V3</td><td>表格、票据</td><td>GPU</td><td>专业版面解析</td></tr>
+                    <tr><td>DeepSeek OCR</td><td>智能理解</td><td>无</td><td>云端服务，Markdown 输出</td></tr>
+                    <tr><td>PaddleOCR-VL-1.6</td><td>复杂文档、表格、图片 PDF</td><td>无</td><td>百度 AI Studio 云端服务，输出 Markdown</td></tr>
+                    <tr><td>PP-OCRv6</td><td>基础文字识别</td><td>无</td><td>百度 AI Studio 云端 OCR，输出纯文本</td></tr>
+                </tbody>
+            </table>
+
+            <h4>选择建议</h4>
+            <ul>
+                <li><strong>个人使用或 CPU 环境</strong>：选择 RapidOCR，免费且资源占用低</li>
+                <li><strong>高精度需求</strong>：选择 MinerU（需要 GPU）或 MinerU Official</li>
+                <li><strong>表格密集型文档</strong>：选择 PP-Structure-V3</li>
+                <li><strong>云端版面解析</strong>：选择 PaddleOCR-VL-1.6，适合希望输出 Markdown 的 PDF 或图片文档</li>
+                <li><strong>云端纯文字识别</strong>：选择 PP-OCRv6，适合只需要提取图片文字的场景</li>
+                <li><strong>简单云服务</strong>：选择 DeepSeek OCR 或 PaddleOCR API</li>
+            </ul>
+
+            <h3>快速配置</h3>
+
+            <h4>RapidOCR</h4>
+            <p>启动后会默认下载，无需配置</p>
+
+            <h4>MinerU（高精度）</h4>
+            <p>项目已内置 mineru-api 服务（位于 docker-compose.yml，属于 all profile），无需额外下载官方 compose 文件。首次构建镜像时会基于 docker/mineru.Dockerfile 下载模型，该过程耗时较长。</p>
+            <p>启动服务（需要 GPU）：</p>
+            <pre><code>docker compose --profile all up -d --build mineru-api</code></pre>
+            <p>该服务在 <code>30001</code> 端口提供 <code>/file_parse</code> 接口，后端 <code>api</code> / <code>worker</code> 默认通过 <code>MINERU_API_URI=http://mineru-api:30001</code> 连接，通常无需额外配置。</p>
+
+            <div class="info-box">
+                <p><strong>显存不足</strong>：若显存有限导致启动失败，可在 <code>docker-compose.yml</code> 的 <code>mineru-api</code> 服务下放开 <code>--gpu-memory-utilization</code> 参数（如 <code>0.5</code>，必要时进一步降低）。</p>
+            </div>
+
+            <h4>MinerU Official（云服务）</h4>
+            <p>从 <a href="https://mineru.net" target="_blank">MinerU 官网</a> 获取 API 密钥，在 .env 配置环境变量：</p>
+            <pre><code>MINERU_API_KEY=your-api-key-here</code></pre>
+
+            <h4>PP-Structure-V3（结构化）</h4>
+            <p>启动服务（需要 GPU）：</p>
+            <pre><code>docker compose up paddlex -d</code></pre>
+
+            <h4>DeepSeek OCR（简单云服务）</h4>
+            <p>在 .env 配置（使用已有的 SiliconFlow 密钥）：</p>
+            <pre><code>SILICONFLOW_API_KEY=your-api-key-here</code></pre>
+
+            <h4>PaddleOCR API（百度 AI Studio 云服务）</h4>
+            <p>PaddleOCR API 使用百度 AI Studio 的 Access Token。获取方式：</p>
+            <ol>
+                <li>登录 <a href="https://aistudio.baidu.com/account/accessToken" target="_blank">百度 AI Studio Access Token 页面</a></li>
+                <li>在页面中复制 Access Token</li>
+                <li>在 <code>.env</code> 中配置为 <code>PADDLEOCR_API_TOKEN</code></li>
+            </ol>
+            <pre><code>PADDLEOCR_API_TOKEN=your-access-token-here</code></pre>
+            <p>如需使用自定义 PaddleOCR API 地址，可额外配置：</p>
+            <pre><code>PADDLEOCR_API_URL=https://paddleocr.aistudio-app.com/api/v2/ocr/jobs</code></pre>
+            <p>配置完成后，重启后端服务，在上传文件或解析临时附件时可以选择：</p>
+            <ul>
+                <li><code>PaddleOCR-VL-1.6</code>：对应 <code>paddleocr_vl_1_6</code>，用于文档版面解析，返回 Markdown</li>
+                <li><code>PP-OCRv6</code>：对应 <code>paddleocr_pp_ocrv6</code>，用于基础 OCR，返回按行拼接的纯文本</li>
+            </ul>
+
+            <h3>图片显示配置</h3>
+            <p>上传文档中的图片需要正确配置才能在外部显示：</p>
+            <p>在 <code>.env</code> 中设置服务器 IP：</p>
+            <pre><code>HOST_IP=your_server_ip</code></pre>
+
+            <h3>注意事项</h3>
+            <ol>
+                <li><strong>图片文件必须启用 OCR</strong>：否则无法提取内容</li>
+                <li><strong>GPU 要求</strong>：MinerU 和 PP-Structure-V3 需要 GPU 支持</li>
+                <li><strong>API 密钥</strong>：MinerU Official、DeepSeek OCR、PaddleOCR API 等云服务需要额外的 API 密钥或 Access Token 配置</li>
+                <li><strong>超时处理</strong>：复杂文档解析可能耗时较长，可通过 <code>MINERU_TIMEOUT</code> 环境变量调整超时时间</li>
+                <li><strong>文件大小限制</strong>：单个上传文件大小不超过 100 MB</li>
+            </ol>
+        </div>
+        
+        <div class="pager">
+            <a href="knowledge-base.html">上一页：知识库</a>
+            <a href="project-overview.html">返回首页</a>
+        </div>
+    </div>
+</body>
+</html>

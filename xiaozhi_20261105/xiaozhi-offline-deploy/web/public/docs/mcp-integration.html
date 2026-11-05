@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP 集成 - Xiaozhi (小智)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .content h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .content ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .pager a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .pager a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MCP 集成</h1>
+            <p>扩展智能体能力的重要方式</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="project-overview.html">项目简介</a></li>
+                <li><a href="model-config.html">模型配置</a></li>
+                <li><a href="knowledge-base.html">知识库</a></li>
+                <li><a href="agents-config.html">智能体开发</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <h2>MCP 集成</h2>
+            <p>MCP（Model Context Protocol）是扩展智能体能力的重要方式。系统支持通过管理界面动态配置 MCP 服务器，无需修改代码。</p>
+            <p>内置 MCP 服务器以代码为事实源：系统启动时会自动补齐缺失项，并用代码中的最新连接与展示字段覆盖数据库定义；是否"已添加"以及工具级禁用列表仍保留数据库状态。</p>
+
+            <h3>支持的传输协议</h3>
+            <table>
+                <tr><th>协议</th><th>说明</th><th>适用场景</th></tr>
+                <tr><td>Streamable HTTP</td><td>流式 HTTP 连接</td><td>远程 MCP 服务</td></tr>
+                <tr><td>SSE</td><td>Server-Sent Events</td><td>标准 HTTP 长连接</td></tr>
+                <tr><td>Stdio</td><td>标准输入输出</td><td>本地进程</td></tr>
+            </table>
+
+            <h3>配置示例</h3>
+
+            <h4>远程 MCP 服务</h4>
+            <pre><code>{
+    "name": "custom-remote-mcp",
+    "transport": "streamable_http",
+    "url": "https://example.com/mcp"
+}</code></pre>
+
+            <h4>本地 Python 进程</h4>
+            <pre><code>{
+    "name": "mysql-mcp-server",
+    "transport": "stdio",
+    "command": "uvx",
+    "args": ["mysql_mcp_server"],
+    "env": {
+        "MYSQL_HOST": "localhost",
+        "MYSQL_DATABASE": "your_database"
+    }
+}</code></pre>
+
+            <h3>服务器管理</h3>
+            <p>管理界面使用"添加 / 移除"语义管理 MCP 服务器：</p>
+            <ul>
+                <li><strong>已添加</strong>：<code>enabled=true</code>，运行时按服务器 slug 直接读取数据库中的最新配置并建立连接</li>
+                <li><strong>可添加</strong>：<code>enabled=false</code>，记录保留但不会进入运行时</li>
+            </ul>
+            <p>Agent 配置中的 <code>mcps</code> 决定本次运行可使用哪些已添加服务器；未显式配置时使用当前用户可见的全部服务器。工具对象会按配置哈希做本地缓存，更新服务器配置后会自动使用新的缓存键，不需要重启服务。</p>
+
+            <h3>工具管理</h3>
+            <p>MCP 工具支持粒度控制：管理员可以单独启用或禁用某个 MCP 服务器下的特定工具，实现精细化的权限管理。</p>
+        </div>
+        
+        <div class="pager">
+            <a href="sandbox-architecture.html">上一页：沙盒架构与设计</a>
+            <a href="skills-management.html">下一页：Skills 管理</a>
+        </div>
+    </div>
+</body>
+</html>

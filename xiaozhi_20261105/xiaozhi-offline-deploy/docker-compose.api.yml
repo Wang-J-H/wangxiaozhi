@@ -1,0 +1,24 @@
+# xiaozhi 后端对接模式覆盖文件
+# 用途：只给外部前端提供 API，不跑本地大模型/重排模型
+#
+# 用法（在项目根目录）：
+#   docker compose -f docker-compose.yml -f docker-compose.api.yml up -d
+#
+# 启动后：
+#   API       http://<host>:5050/api/...
+#   Swagger   http://<host>:5050/docs
+#   OpenAPI   http://<host>:5050/openapi.json
+#   参考界面  http://<host>:8081  （xiaozhi 自带 web，可留着自己对照接口）
+
+services:
+  # 对外暴露 API 端口。原 compose 里 api 没有 ports 映射，只有容器内可达
+  xiaozhi-api:
+    ports:
+      - "5050:5050"
+
+  # 这两个默认会启动，对接模式下用不到，推到 full profile 里
+  xiaozhi-ollama:
+    profiles: ["full"]
+
+  xiaozhi-reranker:
+    profiles: ["full"]

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具系统 - Xiaozhi (小智)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .content h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .content ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .pager a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .pager a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>工具系统</h1>
+            <p>基于注册机制的工具扩展与组装</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="project-overview.html">项目简介</a></li>
+                <li><a href="model-config.html">模型配置</a></li>
+                <li><a href="knowledge-base.html">知识库</a></li>
+                <li><a href="agents-config.html">智能体开发</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <h2>工具系统</h2>
+            <p>Xiaozhi 的工具系统基于注册机制，支持多种工具类型的动态组装。</p>
+
+            <h3>工具注册机制</h3>
+            <p>Xiaozhi 的工具系统采用 <code>@tool</code> 装饰器注册机制，核心位于 <code>backend/package/xiaozhi/agents/toolkits/registry.py</code>。</p>
+
+            <h3>@tool 装饰器</h3>
+            <pre><code>from xiaozhi.agents.toolkits.registry import tool
+
+@tool(category="buildin", tags=["示例"], display_name="示例工具")
+def example_tool(text: str) -> str:
+    """示例工具：返回处理后的文本"""
+    ...</code></pre>
+
+            <p>装饰器参数：</p>
+            <ul>
+                <li><strong>category</strong>: 工具分类，用于分组，例如 <code>buildin</code>、<code>knowledge</code>、<code>debug</code></li>
+                <li><strong>tags</strong>: 标签列表，用于前端展示</li>
+                <li><strong>display_name</strong>: 显示名称（给人看的名字）</li>
+                <li><strong>icon</strong>: 图标名称（可选）</li>
+            </ul>
+
+            <h3>自动发现</h3>
+            <p>导入 <code>toolkits</code> 包时会自动触发注册：</p>
+            <pre><code>from xiaozhi.agents.toolkits import buildin, debug # 触发模块内 @tool 装饰器执行</code></pre>
+            <p><code>toolkits/__init__.py</code> 会导入 <code>buildin</code> 与 <code>debug</code> 模块；知识库工具由内置 <code>knowledge-base</code> Skill 的依赖显式注册，而不是作为所有 Agent 的默认工具。</p>
+
+            <h3>工具分类</h3>
+
+            <h4>内置工具 (buildin)</h4>
+            <table>
+                <tr><th>工具</th><th>说明</th></tr>
+                <tr><td><code>ask_user_question</code></td><td>向用户发起交互式提问</td></tr>
+                <tr><td><code>ocr_parse_file</code></td><td>将 uploads、outputs 或 workspace 中的 PDF、Office 或图片文件转换为 Markdown</td></tr>
+                <tr><td><code>present_artifacts</code></td><td>展示 Agent 沙盒 outputs 目录下的产物文件</td></tr>
+                <tr><td><code>install_skill</code></td><td>从沙盒路径或 Git 来源安装当前用户私有 Skill，并激活当前主智能体会话；子智能体禁用</td></tr>
+                <tr><td><code>tavily_search</code></td><td>Tavily 网页搜索（需配置 <code>TAVILY_API_KEY</code>）</td></tr>
+            </table>
+
+            <p>Qwen-Image 生成能力已迁移为内置 Skill <code>image-gen</code>。模型调用与图片下载在 Agent 沙盒中完成，生成后的图片保存到 <code>/home/gem/user-data/outputs/</code>，再通过 <code>present_artifacts</code> 展示。</p>
+
+            <h4>知识库工具 (kbs)</h4>
+            <p>知识库工具使用 <code>@tool(category="knowledge")</code> 注册，并通过内置 <code>knowledge-base</code> Skill 的 <code>tool_dependencies</code> 按需加载。<code>get_common_kb_tools()</code> 仍可用于直接获取完整工具列表：</p>
+            <pre><code>from xiaozhi.agents.toolkits.kbs import get_common_kb_tools
+
+kb_tools = get_common_kb_tools()
+# 返回: [list_kbs, get_mindmap, query_kb, find_kb_document, open_kb_document]</code></pre>
+
+            <table>
+                <tr><th>工具</th><th>说明</th></tr>
+                <tr><td><code>list_kbs</code></td><td>列出用户可访问的知识库</td></tr>
+                <tr><td><code>get_mindmap</code></td><td>获取知识库的思维导图结构</td></tr>
+                <tr><td><code>query_kb</code></td><td>按 <code>kb_id</code> 检索内容，返回结构化的 <code>kb_id</code>、<code>file_id</code> 与命中片段</td></tr>
+                <tr><td><code>find_kb_document</code></td><td>在已知文件内按关键词或正则定位内容</td></tr>
+                <tr><td><code>open_kb_document</code></td><td>按 <code>file_id</code> 分段打开知识库文档（默认窗口 1800 行）</td></tr>
+                <tr><td><code>search_file</code></td><td>按文件名在指定或全部可见知识库中搜索文件</td></tr>
+            </table>
+
+            <h3>工具组装</h3>
+            <p>工具组装在 Graph 创建阶段完成。内置 Agent 会先调用 <code>prepare_agent_runtime_context</code> 过滤当前用户可用资源，再调用 <code>resolve_configured_runtime_tools(context)</code> 加载已配置工具：</p>
+            <ol>
+                <li><strong>基础工具</strong>：从 <code>context.tools</code> 中按名称筛选</li>
+                <li><strong>MCP 工具</strong>：根据 <code>context.mcps</code> 加载 MCP 服务器工具</li>
+                <li><strong>Skill 依赖工具</strong>：由 <code>SkillsMiddleware</code> 在 Skill 激活后按需追加，包括 <code>knowledge-base</code> 绑定的知识库工具</li>
+            </ol>
+            <pre><code>from xiaozhi.agents.context import prepare_agent_runtime_context
+from xiaozhi.agents.toolkits.service import resolve_configured_runtime_tools
+
+context = await prepare_agent_runtime_context(context, user=current_user, db=db)
+tools = await resolve_configured_runtime_tools(context)</code></pre>
+
+            <h3>Skills 集成</h3>
+            <p>Skills 与工具是两种不同的扩展机制。工具是具体的功能实现，而 Skills 是包含提示词、工具依赖和元数据的完整技能包。通过 <code>context.skills</code> 配置 Skills 时，对应的技能文件会被挂载到沙盒的 <code>/home/gem/skills/&lt;slug&gt;/...</code>，智能体可以通过读取 SKILL.md 来了解如何使用这些技能。</p>
+            <p>关于 Skills 的详细机制，请参阅 <a href="skills-management.html">Skills 管理</a>。</p>
+        </div>
+        
+        <div class="pager">
+            <a href="agents-config.html">上一页：智能体配置</a>
+            <a href="middleware.html">下一页：中间件</a>
+        </div>
+    </div>
+</body>
+</html>

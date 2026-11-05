@@ -1,0 +1,409 @@
+x-api-worker-env: &api-worker-env
+  HOST_IP: ${HOST_IP:-}
+  LITE_MODE: ${LITE_MODE:-}
+  RUNNING_IN_DOCKER: "true"
+  XIAOZHI_ENV: production
+  PYTHONPATH: /app/package
+  POSTGRES_URL: ${POSTGRES_URL:-postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@xiaozhi-postgres:5432/${POSTGRES_DB:-xiaozhi}}
+  REDIS_URL: ${REDIS_URL:-redis://xiaozhi-redis:6379/0}
+  RUN_CANCEL_KEY_TTL_SECONDS: ${RUN_CANCEL_KEY_TTL_SECONDS:-1800}
+  RUN_EVENTS_STREAM_TTL_SECONDS: ${RUN_EVENTS_STREAM_TTL_SECONDS:-7200}
+  XIAOZHI_CORS_ORIGINS: ${XIAOZHI_CORS_ORIGINS:-}
+  NEO4J_URI: ${NEO4J_URI:-bolt://xiaozhi-graph:7687}
+  NEO4J_USERNAME: ${NEO4J_USERNAME:-neo4j}
+  NEO4J_PASSWORD: ${NEO4J_PASSWORD:-0123456789}
+  MILVUS_URI: ${MILVUS_URI:-http://xiaozhi-milvus:19530}
+  MILVUS_DB_NAME: ${MILVUS_DB_NAME:-default}
+  MILVUS_TOKEN: ${MILVUS_TOKEN:-}
+  MINERU_API_URI: ${MINERU_API_URI:-http://xiaozhi-mineru-api:30001}
+  PADDLEX_URI: ${PADDLEX_URI:-http://xiaozhi-paddlex:8080}
+  MINIO_URI: ${MINIO_URI:-http://xiaozhi-minio:9000}
+  SANDBOX_PROVIDER: ${SANDBOX_PROVIDER:-provisioner}
+  SANDBOX_PROVISIONER_URL: ${SANDBOX_PROVISIONER_URL:-http://xiaozhi-sandbox-provisioner:8002}
+  SANDBOX_VIRTUAL_PATH_PREFIX: ${SANDBOX_VIRTUAL_PATH_PREFIX:-/home/gem/user-data}
+  SANDBOX_EXEC_TIMEOUT_SECONDS: ${SANDBOX_EXEC_TIMEOUT_SECONDS:-180}
+  SANDBOX_MAX_OUTPUT_BYTES: ${SANDBOX_MAX_OUTPUT_BYTES:-262144}
+  NO_PROXY: localhost,127.0.0.1,xiaozhi-milvus,xiaozhi-graph,xiaozhi-minio,xiaozhi-milvus-etcd,xiaozhi-etcd,xiaozhi-mineru-api,xiaozhi-paddlex,xiaozhi-sandbox-provisioner,api.siliconflow.cn
+  no_proxy: localhost,127.0.0.1,xiaozhi-milvus,xiaozhi-graph,xiaozhi-minio,xiaozhi-milvus-etcd,xiaozhi-etcd,xiaozhi-mineru-api,xiaozhi-paddlex,xiaozhi-sandbox-provisioner,api.siliconflow.cn
+
+services:
+  # ==================== 后端 API ====================
+  xiaozhi-api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: xiaozhi-api:0.7.1.beta1
+    container_name: xiaozhi-api
+    working_dir: /app
+    networks:
+      - xiaozhi-network
+    volumes:
+      - ./docker/volumes/xiaozhi:/app/saves
+      - ./docker/volumes/models:/app/models
+      - ./scripts:/app/scripts:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      <<: *api-worker-env
+    command: uv run --no-sync --no-dev uvicorn server.main:app --host 0.0.0.0 --port 5050
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5050/api/system/health || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 8
+      start_period: 180s
+    depends_on:
+      xiaozhi-postgres:
+        condition: service_healthy
+      xiaozhi-redis:
+        condition: service_healthy
+      xiaozhi-minio:
+        condition: service_healthy
+      xiaozhi-sandbox-provisioner:
+        condition: service_healthy
+
+  # ==================== 后台 Worker ====================
+  xiaozhi-worker:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: xiaozhi-api:0.7.1.beta1
+    container_name: xiaozhi-worker
+    working_dir: /app
+    networks:
+      - xiaozhi-network
+    volumes:
+      - ./docker/volumes/xiaozhi:/app/saves
+      - ./docker/volumes/models:/app/models
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      <<: *api-worker-env
+    command: uv run --no-sync --no-dev arq server.worker_main.WorkerSettings
+    restart: unless-stopped
+    depends_on:
+      xiaozhi-postgres:
+        condition: service_healthy
+      xiaozhi-redis:
+        condition: service_healthy
+      xiaozhi-minio:
+        condition: service_healthy
+      xiaozhi-sandbox-provisioner:
+        condition: service_healthy
+
+  # ==================== Sandbox Provisioner ====================
+  xiaozhi-sandbox-provisioner:
+    build:
+      context: ./docker/sandbox_provisioner
+      dockerfile: Dockerfile
+    image: xiaozhi-sandbox-provisioner:0.7.1.beta1
+    container_name: xiaozhi-sandbox-provisioner
+    volumes:
+      - ./docker/volumes/xiaozhi:/app/saves
+      - ./docker/sandbox_provisioner/sandbox.env:/app/sandbox.env:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - xiaozhi-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - PROVISIONER_BACKEND=${SANDBOX_PROVISIONER_BACKEND:-docker}
+      - SANDBOX_IMAGE=${SANDBOX_IMAGE:-enterprise-public-cn-beijing.cr.volces.com/vefaas-public/all-in-one-sandbox:latest}
+      - SANDBOX_CONTAINER_PORT=${SANDBOX_CONTAINER_PORT:-8080}
+      - MEMORY_SANDBOX_URL_TEMPLATE=${MEMORY_SANDBOX_URL_TEMPLATE:-http://agent-sandbox:8000}
+      - SANDBOX_HEALTH_TIMEOUT_SECONDS=${SANDBOX_HEALTH_TIMEOUT_SECONDS:-300}
+      - SANDBOX_IDLE_TIMEOUT_SECONDS=${SANDBOX_IDLE_TIMEOUT_SECONDS:-120}
+      - SANDBOX_IDLE_CHECK_INTERVAL_SECONDS=${SANDBOX_IDLE_CHECK_INTERVAL_SECONDS:-10}
+      - SANDBOX_EXEC_TIMEOUT_SECONDS=${SANDBOX_EXEC_TIMEOUT_SECONDS:-180}
+      - HTTP_PROXY=${SANDBOX_HTTP_PROXY:-}
+      - HTTPS_PROXY=${SANDBOX_HTTPS_PROXY:-}
+      - NO_PROXY=localhost,127.0.0.1,host.docker.internal
+      - DOCKER_NETWORK=${SANDBOX_DOCKER_NETWORK:-xiaozhi-local-network}
+      - DOCKER_THREADS_HOST_PATH=${SANDBOX_DOCKER_THREADS_HOST_PATH:-}
+      - DOCKER_SANDBOX_PREFIX=${SANDBOX_DOCKER_SANDBOX_PREFIX:-xiaozhi-sandbox}
+      - DOCKER_SANDBOX_HOST=${SANDBOX_DOCKER_SANDBOX_HOST:-host.docker.internal}
+      - K8S_NAMESPACE=${SANDBOX_K8S_NAMESPACE:-xiaozhi-know}
+      - NODE_HOST=${SANDBOX_NODE_HOST:-host.docker.internal}
+      - KUBECONFIG_PATH=${KUBECONFIG_PATH:-}
+      - THREAD_PVC=${THREAD_PVC:-xiaozhi-thread}
+      - SKILLS_PVC=${SKILLS_PVC:-xiaozhi-skills}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    restart: unless-stopped
+
+  # ==================== 前端 Web (Nginx) ====================
+  xiaozhi-web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      target: production
+    image: xiaozhi-web:0.7.1.beta1
+    container_name: xiaozhi-web
+    ports:
+      - "8081:80"
+    depends_on:
+      - xiaozhi-api
+    networks:
+      - xiaozhi-network
+    environment:
+      - NODE_ENV=production
+      - VITE_LITE_MODE=${LITE_MODE:-}
+    command: nginx -g "daemon off;"
+    restart: unless-stopped
+
+  # ==================== Neo4j 图数据库 ====================
+  xiaozhi-graph:
+    image: neo4j:5.26
+    container_name: xiaozhi-graph
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./docker/volumes/neo4j/data:/data
+      - ./docker/volumes/neo4j/logs:/var/lib/neo4j/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7474 || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    environment:
+      - NEO4J_AUTH=${NEO4J_USERNAME:-neo4j}/${NEO4J_PASSWORD:-0123456789}
+      - NEO4J_server_bolt_listen__address=0.0.0.0:7687
+      - NEO4J_server_http_listen__address=0.0.0.0:7474
+      - ENTITY_EMBEDDING=true
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== etcd（Milvus 依赖） ====================
+  xiaozhi-etcd:
+    container_name: xiaozhi-etcd
+    image: quay.io/coreos/etcd:v3.5.5
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - ./docker/volumes/milvus/etcd:/etcd
+    command: etcd -advertise-client-urls=http://xiaozhi-etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== MinIO 对象存储 ====================
+  xiaozhi-minio:
+    container_name: xiaozhi-minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - ./docker/volumes/milvus/minio:/minio_data
+      - ./docker/volumes/milvus/minio_config:/root/.minio
+    command: minio server /minio_data --address 0.0.0.0:9000 --console-address 0.0.0.0:9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== Milvus 向量数据库 ====================
+  xiaozhi-milvus:
+    image: milvusdb/milvus:v2.5.6
+    container_name: xiaozhi-milvus
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: xiaozhi-etcd:2379
+      MINIO_ADDRESS: xiaozhi-minio:9000
+      MILVUS_LOG_LEVEL: error
+    volumes:
+      - ./docker/volumes/milvus/milvus:/var/lib/milvus
+      - ./docker/volumes/milvus/logs:/var/lib/milvus/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 60s
+      start_period: 120s
+      timeout: 30s
+      retries: 5
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - "xiaozhi-etcd"
+      - "xiaozhi-minio"
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== PostgreSQL ====================
+  xiaozhi-postgres:
+    image: postgres:16
+    container_name: xiaozhi-postgres
+    ports:
+      - "5433:5432"    # 宿主机5433→容器5432（宿主机5432已被占用）
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-xiaozhi}
+      - TZ=${TZ:-Asia/Shanghai}
+    volumes:
+      - ./docker/volumes/postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-xiaozhi} || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== Redis ====================
+  xiaozhi-redis:
+    image: redis:7-alpine
+    container_name: xiaozhi-redis
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+    volumes:
+      - ./docker/volumes/redis:/data
+    ports:
+      - "6380:6379"    # 宿主机6380→容器6379（宿主机6379已被占用）
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== MinerU 文档解析（GPU） ====================
+  xiaozhi-mineru-api:
+    build:
+      context: .
+      dockerfile: docker/mineru.Dockerfile
+    image: mineru-vllm:latest
+    container_name: xiaozhi-mineru-api
+    profiles:
+      - all
+    env_file:
+      - .env
+    ports:
+      - "30001:30001"
+    environment:
+      MINERU_MODEL_SOURCE: local
+      VLLM_USE_V1: "1"
+    entrypoint: mineru-api
+    command:
+      --host 0.0.0.0
+      --port 30001
+      --gpu-memory-utilization 0.4
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    ipc: host
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:30001/health || exit 1"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== PaddleX OCR（GPU） ====================
+  xiaozhi-paddlex:
+    build:
+      context: .
+      dockerfile: docker/paddlex.Dockerfile
+    image: paddlex:latest
+    container_name: xiaozhi-paddlex-ocr
+    profiles:
+      - all
+    volumes:
+      - ./docker/volumes/paddlex:/paddlex
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
+    networks:
+      - xiaozhi-network
+    restart: unless-stopped
+
+  # ==================== Ollama Embedding 服务 ====================
+  xiaozhi-ollama:
+    image: ollama/ollama:latest
+    container_name: xiaozhi-ollama
+    restart: unless-stopped
+    volumes:
+      - ./docker/volumes/ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - xiaozhi-network
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=2
+      - OLLAMA_MAX_LOADED_MODELS=2
+
+  # ==================== TEI Reranker 服务 ====================
+  xiaozhi-reranker:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+    container_name: xiaozhi-reranker
+    restart: unless-stopped
+    ports:
+      - "8002:80"
+    networks:
+      - xiaozhi-network
+    volumes:
+      - ./docker/volumes/tei-cache:/data
+    environment:
+      - HF_HOME=/data
+    command:
+      - "--model-id"
+      - "BAAI/bge-reranker-v2-m3"
+      - "--port"
+      - "80"
+
+networks:
+  xiaozhi-network:
+    driver: bridge
+    name: xiaozhi-local-network

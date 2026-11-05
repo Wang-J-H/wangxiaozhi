@@ -1,0 +1,98 @@
+xiaozhi 交付包 —— 先看这个
+================================
+
+你的场景：把 xiaozhi 平台的部分能力，接进你自己的新前端。
+xiaozhi 只当后端跑，你的前端调它的 HTTP API。不用改 xiaozhi 源码。
+
+
+一、目录说明
+------------
+
+  backend/                后端源码（Python / FastAPI）
+  web/                    自带前端源码（Vue3），当接口参考用，不用你改
+  docker/                 Dockerfile 和 nginx 配置（构建镜像才用得到）
+  docker-compose.yml      服务编排主文件
+  docker-compose.api.yml  【对接模式用这个覆盖文件】
+  .env.example            配置模板，复制成 .env 再改
+  deploy.sh               一键部署脚本（全量模式，对接场景别用）
+  docs/                   文档
+  scripts/                辅助脚本
+
+  docs/xiaozhi_后端API对接指南.md       ← 对接场景主文档，从这份开始看
+  docs/xiaozhi_源码构建与部署指南.md    ← 自己构建镜像部署，含全部已知坑位
+  docs/xiaozhi_最小化本地部署指南.md    ← 环境准备、排错参考
+
+
+二、三步启动
+------------
+
+1) 改配置
+     cp .env.example .env
+   然后编辑 .env，至少改这三处：
+     - JWT_SECRET_KEY        填个随机串（openssl rand -hex 32）
+     - XIAOZHI_CORS_ORIGINS  填你前端实际地址
+     - 各种密码              换成你自己的
+
+2) 构建镜像（第一次必做，约 10~20 分钟）
+     docker compose build xiaozhi-api xiaozhi-web xiaozhi-sandbox-provisioner
+
+3) 启动
+     docker compose -f docker-compose.yml -f docker-compose.api.yml up -d
+
+   首次启动要建表初始化，等 2~3 分钟。
+   确认：docker compose ps 里 xiaozhi-api 变成 healthy
+
+4) 创建管理员（必做，否则登录返回 401）
+     docker compose run --rm --no-deps --entrypoint python \
+       xiaozhi-api /app/scripts/seed_admin.py
+
+   默认账号：登录标识 uid=admin，密码=admin123
+   系统没有自动建管理员的机制，users 表建好后是空的，必须手动跑一次。
+
+5) 验证
+     curl http://localhost:5050/api/system/health
+     浏览器打开 http://localhost:5050/docs
+
+   登录接口 POST /api/auth/token 的 username 字段要填 uid（admin），
+   不是显示名称（管理员），填错会报「登录标识或密码错误」。
+
+
+三、三个最容易踩的坑
+--------------------
+
+1. CORS 不放行 → 浏览器直接拦
+   xiaozhi 默认只允许 localhost:5173。你前端在别的端口必须配
+   XIAOZHI_CORS_ORIGINS，改完重启 xiaozhi-api。
+
+2. 登录是 form-data，不是 JSON
+   POST /api/auth/token
+   字段 username（uid 或手机号）+ password
+
+3. 对话不是一问一答，是 run + SSE
+   POST /api/chat/thread            → thread_id
+   POST /api/agent/runs             → run_id + stream_url
+   GET  /api/agent/runs/{id}/events → SSE 推流，直到 event: end
+
+   前端不能用 EventSource（没法带 Authorization 头），
+   要用 fetch + ReadableStream，对接指南第 6.3 节有完整代码。
+
+
+四、接口文档
+------------
+
+不用手抄，后端跑起来就有：
+
+  http://localhost:5050/docs          Swagger UI，能直接点着试
+  http://localhost:5050/openapi.json  导入 Apifox / Postman
+
+建议把 openapi.json 导进 Apifox，全套参数和模型定义自动生成。
+
+
+五、想改 xiaozhi 自己的代码
+--------------------------
+
+如果除了对接，还要改后端逻辑或看前端怎么调接口，用开发模式：
+见 docs/xiaozhi_开发模式启动说明.md（如果包里没有，找交付人再要）。
+
+
+版本：0.7.1.beta1

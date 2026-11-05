@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langfuse 集成 - Xiaozhi (小智)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        nav ul li {
+            margin-right: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .content h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .content p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        .content ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .content a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        .pager {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .pager a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .pager a:hover {
+            background-color: #f0f2ff;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Langfuse 集成</h1>
+            <p>智能体执行观测与可观测性平台</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="project-overview.html">项目简介</a></li>
+                <li><a href="model-config.html">模型配置</a></li>
+                <li><a href="knowledge-base.html">知识库</a></li>
+                <li><a href="agents-config.html">智能体开发</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <h2>Langfuse 集成</h2>
+
+            <h3>为什么 Xiaozhi 需要 Langfuse</h3>
+            <p>Langfuse 是一套面向大模型应用的可观测性平台，适合用来观察一次智能体执行过程中到底发生了什么。在 Xiaozhi 里，一轮用户消息通常不会只对应一次简单的模型调用，它往往会伴随 LangGraph 图执行、工具调用、知识库检索以及多轮中间状态切换。</p>
+            <p>Langfuse 的价值在于，它把这些原本分散的执行细节收拢到同一条 trace 里，让你能够从一次对话出发，回看模型输入输出、工具链路、耗时和错误位置。</p>
+
+            <h3>在 Xiaozhi 中能做什么</h3>
+            <p>Xiaozhi 对 Langfuse 的映射方式比较直接：</p>
+            <ul>
+                <li>一个 Xiaozhi 用户映射为 Langfuse 中的 <code>user_id</code></li>
+                <li>一个对话线程映射为 <code>session_id</code></li>
+                <li>每次用户输入触发的一轮智能体执行形成一条独立的 trace</li>
+            </ul>
+            <p>当 Langfuse 与 Xiaozhi 连通之后，你可以看到：</p>
+            <ul>
+                <li>这一轮调用关联的是哪个用户、哪个线程、哪个智能体</li>
+                <li>模型调用、工具调用和整体耗时表现</li>
+                <li>用户反馈评分（点赞/点踩）会同步写入 Langfuse score</li>
+            </ul>
+
+            <h3>如何配置</h3>
+            <p>启用 Langfuse 需要在运行 Xiaozhi 的环境中配置以下环境变量：</p>
+            <ul>
+                <li><code>LANGFUSE_PUBLIC_KEY</code>：用于鉴权</li>
+                <li><code>LANGFUSE_SECRET_KEY</code>：用于鉴权</li>
+                <li><code>LANGFUSE_BASE_URL</code>：指定 Langfuse 服务地址（官方云服务通常为 <code>https://cloud.langfuse.com</code>）</li>
+            </ul>
+            <p>Langfuse 只有在 key 配置完整时才会被启用。如果没有配置上述变量，Xiaozhi 会自动退化为"不启用 tracing"的状态，正常聊天功能不会因此中断。</p>
+
+            <h3>配置后系统会如何工作</h3>
+            <p>理解 Langfuse 的关键点在于，它并不等于"所有调试信息都会立即显示在界面里"。当前 Xiaozhi 的设计重点是先把 trace id 与执行上下文稳定关联起来，再把这些信息作为后续调试和分析的基础。</p>
+            <p>系统会优先保证聊天主链路的稳定性，而不是为了获取额外的可点击 URL 去同步等待 Langfuse 的远程接口。也就是说，Langfuse 在 Xiaozhi 里首先是观测数据的来源，其次才是一个方便跳转查看的外部页面入口。</p>
+
+            <h3>如何查看是否生效</h3>
+            <p>启用完成后，最常见的查看方式是在 Langfuse 控制台中按项目查看 traces。进入项目后，可以按照用户、线程、Agent 或时间范围来筛选，定位到某一轮具体的请求。</p>
+            <p>快速确认是否生效的方法：发起一条真实对话，再到 Langfuse 控制台中按最近时间排序查看是否出现新的 trace。</p>
+
+            <h3>当前建议的接入方式</h3>
+            <p>目前 Xiaozhi 推荐的接入顺序是：</p>
+            <ol>
+                <li>先完成 tracing，确保 trace 关联稳定</li>
+                <li>再使用反馈 score 分析用户满意度</li>
+                <li>后续再扩展到更完整的运营面板</li>
+            </ol>
+            <p>只有在 trace 关联已经稳定、用户和线程维度映射已经一致的前提下，后续的评分、质量分析和使用统计才会真正可靠。</p>
+        </div>
+        
+        <div class="pager">
+            <a href="subagents-management.html">上一页：子智能体</a>
+            <a href="agents-config.html">返回：智能体开发</a>
+        </div>
+    </div>
+</body>
+</html>

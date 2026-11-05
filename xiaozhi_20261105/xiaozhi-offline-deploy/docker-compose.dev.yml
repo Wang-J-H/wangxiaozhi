@@ -1,0 +1,67 @@
+# =============================================================================
+# Xiaozhi 开发模式（源码挂载 + 热重载）
+#
+# 用法：
+#   docker compose -f docker-compose.yml \
+#                  -f docker-compose.min.yml \
+#                  -f docker-compose.dev.yml up -d
+#
+# 前端访问：http://localhost:5173   （Vite dev server，改代码立即热更新）
+# 后端接口：http://localhost:5050   （uvicorn --reload，改 Python 自动重启）
+#
+# 说明：
+#   - 只挂载源码目录，不重建镜像
+#   - Python 依赖、torch 等都在 xiaozhi-api 镜像里，宿主机不需要装
+#   - 生产版前端仍在 8081（nginx），开发时用 5173 即可
+# =============================================================================
+
+services:
+  # ---------- 后端：源码挂载 + 自动重载 ----------
+  xiaozhi-api:
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./backend/server:/app/server
+      - ./backend/package:/app/package
+    command: >
+      uv run --no-sync --no-dev uvicorn server.main:app
+      --host 0.0.0.0 --port 5050
+      --reload
+      --reload-dir /app/server
+      --reload-dir /app/package/xiaozhi
+
+  # ---------- 异步任务 Worker：同样挂载源码 ----------
+  xiaozhi-worker:
+    volumes:
+      - ./backend/server:/app/server
+      - ./backend/package:/app/package
+    command: >
+      uv run --no-sync --no-dev arq
+      --watch /app/server
+      --watch /app/package/xiaozhi
+      server.worker_main.WorkerSettings
+
+  # ---------- 前端：Vite dev server ----------
+  xiaozhi-web-dev:
+    image: node:24-alpine
+    container_name: xiaozhi-web-dev
+    working_dir: /app
+    volumes:
+      - ./web:/app
+      - web_node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - TZ=Asia/Shanghai
+    command: >
+      sh -c "corepack enable
+      && pnpm install --frozen-lockfile --registry=https://registry.npmmirror.com
+      && pnpm dev --host 0.0.0.0 --port 5173"
+    networks:
+      - xiaozhi-network
+    depends_on:
+      - xiaozhi-api
+    restart: unless-stopped
+
+volumes:
+  web_node_modules:
