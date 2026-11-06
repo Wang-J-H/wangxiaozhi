@@ -6,6 +6,76 @@
 
 ---
 
+## Agent Hub 联调：Windows 原生最小后端
+
+这一模式只启动 Xiaozhi API 与 Agent Run Worker。基础设施复用本机现有 PostgreSQL、Redis 容器；不启动 Xiaozhi Web，也不依赖 RAG 服务。
+
+### 适用边界
+
+- 必需：Python venv、PostgreSQL 中独立的 `xiaozhi` DB、Redis 独立逻辑库 `/1`、API、Worker。
+- 模型：当前联调使用 DeepSeek；`DEEPSEEK_API_KEY` 仅通过 API/Worker 进程环境注入，不写入 Git。
+- 聊天与历史会话：不需要 Milvus、Neo4j、MinIO、知识库解析服务。
+- Skill 仅在需要 Shell 或文件系统沙盒时才要求另启 sandbox provisioner；纯聊天 smoke 不需要。
+- 禁止复制旧 `.venv`，禁止删除或重建共享 Docker volume。
+
+### 首次准备
+
+在新仓库根目录执行：
+
+```powershell
+# 旧配置只做本地复制；根 .gitignore 已忽略 .env
+Copy-Item S:\Projects\xiaozhi-offline-deploy\.env .\.env
+
+cd backend
+$env:UV_HTTP_TIMEOUT='180'
+$env:UV_CONCURRENT_DOWNLOADS='4'
+uv sync --frozen --no-dev --default-index 'https://pypi.org/simple'
+cd ..
+```
+
+`.env` 中共享基础设施 URL 使用宿主机已发布端口。示例：
+
+```dotenv
+POSTGRES_URL=postgresql+psycopg://postgres:<password>@127.0.0.1:5432/xiaozhi
+REDIS_URL=redis://127.0.0.1:6379/1
+```
+
+`xiaozhi` 必须是独立 DB；不要把表写进 Agent Loop 原有业务 DB。Redis 使用 `/1`，避免和其他服务的 key 混用。
+
+### 启动 API 与 Worker
+
+打开两个 PowerShell，均从仓库根目录启动。两个进程使用同一份 `.env`；Worker 必须拿到与默认智能体模型配置对应的 DeepSeek Key。
+
+API：
+
+```powershell
+$env:DEEPSEEK_API_KEY='<local-secret>'
+.\backend\.venv\Scripts\python.exe .\scripts\dev\run_native_api.py
+```
+
+Worker：
+
+```powershell
+$env:DEEPSEEK_API_KEY='<local-secret>'
+.\backend\.venv\Scripts\python.exe .\scripts\dev\run_native_worker.py
+```
+
+两个启动器都会加载当前 checkout 的 `backend/package`，并在 Windows 使用 Selector event loop。它们不包含旧版 `User.__table__` schema monkey patch。
+
+### Agent Hub 契约 smoke
+
+先为联调用户创建一个启用的 `yxkey_` API Key。再开第三个 PowerShell：
+
+```powershell
+$env:XIAOZHI_BASE_URL='http://127.0.0.1:5050'
+$env:XIAOZHI_API_KEY='<local-yxkey-secret>'
+.\backend\.venv\Scripts\python.exe .\scripts\dev\smoke_agent_hub_contract.py
+```
+
+脚本不会打印 API Key。它会真实验证：health、默认智能体、创建 thread/run、`verbose=false` SSE、最终正文、历史会话、第二轮取消终态。输出中的 run/thread ID 可用于排查。
+
+---
+
 ## 一、先搞清楚两种模式
 
 | | 镜像部署模式 | **开发模式（本文）** |
