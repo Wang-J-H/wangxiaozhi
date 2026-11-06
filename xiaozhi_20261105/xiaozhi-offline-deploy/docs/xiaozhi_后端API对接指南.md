@@ -173,7 +173,7 @@ xiaozhi 的对话不是「POST 一次拿完整回答」，而是**异步 run + S
 
 ```
 ① 建会话
-   POST /api/chat/thread          → { thread_id }
+   POST /api/chat/thread          → { id }
 
 ② 发起一次运行
    POST /api/agent/runs           → { run_id, stream_url }
@@ -188,28 +188,31 @@ xiaozhi 的对话不是「POST 一次拿完整回答」，而是**异步 run + S
 
 ```bash
 TOKEN="eyJhbGciOi..."
+AGENT_SLUG="你的智能体slug"
 
 # ① 建会话
 THREAD=$(curl -s -X POST http://localhost:5050/api/chat/thread \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"title":"新会话"}' | jq -r '.id')
+  -d "{\"title\":\"新会话\",\"agent_id\":\"$AGENT_SLUG\"}" | jq -r '.id')
 
 # ② 发起运行
 RUN=$(curl -s -X POST http://localhost:5050/api/agent/runs \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d "{
-    \"agent_slug\": \"你的智能体slug\",
+    \"agent_slug\": \"$AGENT_SLUG\",
     \"thread_id\": \"$THREAD\",
     \"query\": \"帮我查一下这个季度的销售数据\"
   }" | jq -r '.run_id')
 
 # ③ 订阅流
-curl -N http://localhost:5050/api/agent/runs/$RUN/events?after_seq=0-0 \
+curl -N "http://localhost:5050/api/agent/runs/$RUN/events?after_seq=0-0&verbose=false" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Accept: text/event-stream"
 ```
+
+`POST /api/chat/thread` 的 `agent_id` 是必填字段，值与后续创建 run 时的 `agent_slug` 相同。
 
 ### 5.2 `POST /api/agent/runs` 请求体
 
@@ -259,13 +262,12 @@ curl http://localhost:5050/api/agent/default -H "Authorization: Bearer $TOKEN"
 | event | 含义 | 你怎么处理 |
 | --- | --- | --- |
 | `metadata` | 元信息（模型、run 基础信息） | 忽略或记日志 |
-| `messages` | 完整消息快照 | 用于覆盖当前消息列表 |
-| `message_delta` | 回答的增量文本 | **追加到气泡里**，主展示靠这个 |
-| `tool_call` | 工具调用开始/参数 | 渲染「正在调用 xxx」 |
-| `tool_call_delta` | 工具调用增量 | 同上，增量更新 |
+| `messages` | 消息流 envelope | 读取 `payload.chunk.stream_event` 或 `payload.items[*].stream_event` |
 | `custom` | 自定义事件，`name=xiaozhi.agent_state` 时是 Agent 状态 | 可忽略 |
 | `end` | **流结束** | 收尾，关闭连接 |
 | `error` | 出错 | 提示用户 |
+
+`message_delta`、`tool_call`、`tool_call_delta` 是 `messages` envelope 内部的 `stream_event.type`，不是顶层 SSE `event`。最终可见正文只取 `stream_event.type=message_delta` 的 `content`；`reasoning_content` 不应当作最终正文展示。
 
 `data` 是 JSON。流里还会有 `: heartbeat` 注释行（约每 15 秒一次），**解析时必须跳过**，否则会报 JSON 解析错。
 
@@ -292,7 +294,7 @@ Last-Event-ID: 12-0
 ```js
 async function streamRun(runId, token, { afterSeq = '0-0', onEvent } = {}) {
   const res = await fetch(
-    `http://localhost:5050/api/agent/runs/${runId}/events?after_seq=${afterSeq}`,
+    `http://localhost:5050/api/agent/runs/${runId}/events?after_seq=${afterSeq}&verbose=false`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -353,10 +355,20 @@ async function streamRun(runId, token, { afterSeq = '0-0', onEvent } = {}) {
 ```js
 await streamRun(runId, token, {
   onEvent: (event, data, id) => {
-    if (event === 'message_delta') {
-      appendText(data); // 你的增量渲染逻辑
-    } else if (event === 'tool_call') {
-      showToolCall(data);
+    if (event === 'messages') {
+      const payload = data?.payload || {};
+      const chunks = [payload.chunk, ...(payload.items || [])].filter(Boolean);
+      for (const chunk of chunks) {
+        const streamEvent = chunk.stream_event;
+        if (streamEvent?.type === 'message_delta' && streamEvent.content) {
+          appendText(streamEvent.content);
+        } else if (
+          streamEvent?.type === 'tool_call' ||
+          streamEvent?.type === 'tool_call_delta'
+        ) {
+          showToolCall(streamEvent);
+        }
+      }
     } else if (event === 'end') {
       finish();
     }
