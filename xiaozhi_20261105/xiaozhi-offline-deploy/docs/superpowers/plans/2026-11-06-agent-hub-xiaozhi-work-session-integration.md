@@ -587,11 +587,11 @@ git commit -m "feat: add xiaozhi work conversation history"
 - Consumes: Task 2 可运行后端；Task 3-6 完整 Agent Hub 功能。
 - Produces: 可重复的端到端验收证据和下一位协作者可用的启动说明。
 
-- [ ] **Step 1: 启动真实最小环境**
+- [x] **Step 1: 启动真实最小环境**
 
 启动共享 PostgreSQL/Redis、Xiaozhi API/Worker、Agent Hub。确认 sandbox/RAG 未启动时基础聊天和历史仍可用；若 Agent 主动调用依赖 sandbox 的 Skill，应得到明确错误，不能伪成功。
 
-- [ ] **Step 2: 写真实 E2E 用例**
+- [x] **Step 2: 写真实 E2E 用例**
 
 用例覆盖：
 
@@ -606,11 +606,11 @@ git commit -m "feat: add xiaozhi work conversation history"
 9. 新建另一轮并停止，UI 停止且后端 run 被 cancel；
 10. 切到 daily 后不出现 work 历史或消息。
 
-- [ ] **Step 3: 验证密钥没有进入浏览器**
+- [x] **Step 3: 验证密钥没有进入浏览器**
 
 检查：构建产物、Playwright trace、页面 HTML、浏览器 Network request headers、客户端错误信息。任何位置不得出现 `yxkey_` 或真实 key hash/值。
 
-- [ ] **Step 4: 运行完整前端回归**
+- [x] **Step 4: 运行完整前端回归**
 
 Run:
 
@@ -624,29 +624,29 @@ pnpm test:e2e -- e2e/xiaozhi-work-session.spec.ts
 
 Expected: 全部 exit 0。
 
-- [ ] **Step 5: 运行后端相关回归**
+- [x] **Step 5: 运行后端相关回归**
 
 Run:
 
 ```powershell
 cd backend
-uv run pytest test/unit/test_auth_utils.py test/integration/api/test_apikey_router.py test/unit/services/test_agent_run_service.py test/unit/storage/test_conversation_repository.py -q
+uv run --group test python -m pytest test/unit/test_auth_utils.py test/integration/api/test_apikey_router.py test/unit/services/test_agent_run_service.py test/unit/storage/test_conversation_repository.py -q
 ```
 
 Expected: PASS。
 
-- [ ] **Step 6: 更新 README 与交接说明**
+- [x] **Step 6: 更新 README 与交接说明**
 
 记录：服务启动顺序、必要 env 名、shared-demo-user 限制、日常/办公后端映射、历史 URL、已知非目标、停止命令。不得写入任何 secret value。
 
-- [ ] **Step 7: 提交 Agent Hub 验收改动**
+- [x] **Step 7: 提交 Agent Hub 验收改动**
 
 ```powershell
 git add e2e README.md .env.example
 git commit -m "test: verify xiaozhi work session integration"
 ```
 
-- [ ] **Step 8: 回写并提交 Xiaozhi 计划状态**
+- [x] **Step 8: 回写并提交 Xiaozhi 计划状态**
 
 只勾选已有命令输出证明通过的步骤；不得提前勾选。然后在 Xiaozhi 仓库执行：
 
@@ -654,6 +654,15 @@ git commit -m "test: verify xiaozhi work session integration"
 git add docs/superpowers/plans/2026-11-06-agent-hub-xiaozhi-work-session-integration.md
 git commit -m "docs: record xiaozhi integration verification"
 ```
+
+**2026-11-09 验收证据：**
+
+- 最小环境：宿主机 PostgreSQL/Redis + 原生 Xiaozhi API/Worker；未启动 Xiaozhi RAG、向量 DB 或 sandbox，真实两轮聊天、历史恢复和 cancel 通过。
+- Agent Hub：Vitest `24 files / 230 tests`、lint、typecheck、生产 build 均 exit 0；真实 Chromium E2E `1 passed`。
+- 泄密检查：浏览器静态产物、HTML/Network/错误断言、Playwright trace 均无完整 API Key；最终 trace `prefix_hits=0`、`full_key_hits=0`。
+- Xiaozhi：指定测试集合 `55 passed, 10 skipped`；跳过项为需要 live integration fixture 的既有用例。
+- Agent Hub 提交：`ee5f22e test: verify xiaozhi work session integration`。
+- Windows 说明：测试依赖在 `test` dependency group；应用控制会阻止 `pytest.exe` shim，因此使用 `uv run --group test python -m pytest`。
 
 ---
 
