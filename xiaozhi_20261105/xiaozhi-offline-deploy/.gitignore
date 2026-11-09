@@ -1,0 +1,12 @@
+.env
+.env.local
+
+backend/.venv/
+backend/.runtime/
+backend/saves/
+saves/
+
+**/__pycache__/
+*.pyc
+*.log
+*.pid
