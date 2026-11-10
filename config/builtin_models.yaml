@@ -1,0 +1,18 @@
+builtin_models:
+  - id: builtin-ollama-embedding
+    type: Embedding
+    source: local
+    is_default: true
+    name: bge-m3
+    parameters:
+      embedding_parameters:
+        dimension: 1024
+
+  - id: builtin-tei-rerank
+    type: Rerank
+    source: remote
+    is_default: true
+    name: BAAI/bge-reranker-v2-m3
+    parameters:
+      base_url: http://host.docker.internal:8081
+      provider: huggingface_tei
