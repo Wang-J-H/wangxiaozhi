@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>WeKnora Intro</title>
+<title>WangXiaoZhi Intro</title>
 <style>
 :root{
   --ink:#101f38; --ink-deep:#0a1526; --soft:#40536f; --mute:#6d7d94;
@@ -355,7 +355,7 @@ svg.i{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:
 
   <!-- 7. Browser -->
   <section id="s-browser" class="prod">
-    <div class="hdr"><div class="eyebrow">04 — LOCAL BROWSER</div><div class="h1">It can drive your own browser, too.</div><div class="sub">BrowserSkill connects WeKnora to the Chrome you already use. It opens pages, reads, clicks and fills forms, and you can pause or stop it anytime.</div></div>
+    <div class="hdr"><div class="eyebrow">04 — LOCAL BROWSER</div><div class="h1">It can drive your own browser, too.</div><div class="sub">BrowserSkill connects WangXiaoZhi to the Chrome you already use. It opens pages, reads, clicks and fills forms, and you can pause or stop it anytime.</div></div>
     <div class="vp" id="brVp"></div>
   </section>
 
@@ -383,7 +383,7 @@ svg.i{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:
     </div>
     <div class="end" id="outB">
       <img src="assets/logo-dark.png">
-      <div class="links"><span>github.com/Tencent/WeKnora</span><span class="sep">|</span><span>weknora.weixin.qq.com</span></div>
+      <div class="links"><span>github.com/wangxiaozhi/WangXiaoZhi</span><span class="sep">|</span><span>weknora.weixin.qq.com</span></div>
       <div class="fine">STAR IT · TRY IT · BUILD WITH IT</div>
     </div>
   </section>
@@ -561,13 +561,13 @@ $('skWin').innerHTML=wbar('localhost/platform/toolbox')+`<div class="app">${side
 /* ================= Browser scene ================= */
 $('brVp').innerHTML=`
 <div class="chrome" id="chrome">
- <div class="ctabs"><span class="dots"><i></i><i></i><i></i></span><div class="ctab" id="ctab"><span id="ctabT">Releases · Tencent/WeKnora</span></div></div>
- <div class="ctool"><span style="color:#888">←&nbsp;&nbsp;→&nbsp;&nbsp;↻</span><div class="omni">${I('lock')}<span id="omni">github.com/Tencent/WeKnora/releases</span></div></div>
+ <div class="ctabs"><span class="dots"><i></i><i></i><i></i></span><div class="ctab" id="ctab"><span id="ctabT">Releases · WangXiaoZhi/WangXiaoZhi</span></div></div>
+ <div class="ctool"><span style="color:#888">←&nbsp;&nbsp;→&nbsp;&nbsp;↻</span><div class="omni">${I('lock')}<span id="omni">github.com/wangxiaozhi/WangXiaoZhi/releases</span></div></div>
  <div class="infobar" id="infobar">“BrowserSkill” started debugging this browser <span>Cancel</span></div>
- <div class="cpage" id="pgRepo"><div class="repo"><div class="rh">Tencent / <b>WeKnora</b></div>
+ <div class="cpage" id="pgRepo"><div class="repo"><div class="rh">WangXiaoZhi / <b>WangXiaoZhi</b></div>
    <div class="rt"><span>Code</span><span>Issues</span><span>Pull requests</span><span class="on">Releases</span><span>Discussions</span></div>
-   <div class="rel"><div class="v">v0.8.2 <em>Latest</em></div><p>Released by the WeKnora maintainers</p>
-   <ul><li>Unified rerank across search APIs, with diagnostics</li><li>MinerU 4.0 V1 API for self-hosted MinerU</li><li>Local browser pairing for WeKnora Lite</li><li>RSS: reject oversized responses</li></ul></div></div></div>
+   <div class="rel"><div class="v">v0.8.2 <em>Latest</em></div><p>Released by the WangXiaoZhi maintainers</p>
+   <ul><li>Unified rerank across search APIs, with diagnostics</li><li>MinerU 4.0 V1 API for self-hosted MinerU</li><li>Local browser pairing for WangXiaoZhi Lite</li><li>RSS: reject oversized responses</li></ul></div></div></div>
  <div class="cpage" id="pgForm"><div class="hb">
    <label>Customer name: <span class="f" id="f0"></span></label>
    <label>Telephone: <span class="f" id="f1"></span></label>
@@ -583,7 +583,7 @@ $('brVp').innerHTML=`
 </div>
 <div class="wkmini" id="wkmini"><div class="hd"><img src="assets/logo-light.png"><span>● Local browser</span></div>
  <div class="body">
-  <div class="umsg" id="brU"><div>Find the latest WeKnora release on GitHub, then fill in the httpbin order form with it. Don’t submit.</div></div>
+  <div class="umsg" id="brU"><div>Find the latest WangXiaoZhi release on GitHub, then fill in the httpbin order form with it. Don’t submit.</div></div>
   <div class="sum" id="brSum"></div>
   <div class="steps" id="brSteps"></div>
  </div>
@@ -591,7 +591,7 @@ $('brVp').innerHTML=`
   <div class="pb"><span class="live">Live</span><span class="btn">❚❚ Pause</span><span class="btn">■ End</span></div></div>
 </div>`;
 const BR_STEPS=[
- {i:'web',t:'Local browser · Open page',s:'github.com/Tencent/WeKnora/releases',at:1.0},
+ {i:'web',t:'Local browser · Open page',s:'github.com/wangxiaozhi/WangXiaoZhi/releases',at:1.0},
  {i:'fileq',t:'Local browser · Read page',at:2.0},
  {i:'bulb',t:'Latest release is v0.8.2. Opening the order form next.',at:3.0},
  {i:'web',t:'Local browser · Open page',s:'httpbin.org/forms/post',at:4.1},
@@ -784,11 +784,11 @@ function render(t){
     const onForm=L>=4.1;
     $('pgRepo').style.display=onForm?'none':'block';$('pgForm').style.display=onForm?'block':'none';
     $('pgRepo').style.opacity=P(L,1.1,.4);$('pgForm').style.opacity=P(L,4.1,.4);
-    setHTML($('omni'),onForm?'httpbin.org/forms/post':'github.com/Tencent/WeKnora/releases');
-    setHTML($('ctabT'),onForm?'httpbin.org/forms/post':'Releases · Tencent/WeKnora');
+    setHTML($('omni'),onForm?'httpbin.org/forms/post':'github.com/wangxiaozhi/WangXiaoZhi/releases');
+    setHTML($('ctabT'),onForm?'httpbin.org/forms/post':'Releases · WangXiaoZhi/WangXiaoZhi');
     setHTML($('prevHost'),onForm?'httpbin.org':'github.com');
     // form fill schedule
-    const F=[['f0','WeKnora Demo',5.0],['f1','13800000000',5.8],['f2','demo@weknora.local',6.5],['r1',null,7.4],['c0',null,7.9],['c1',null,8.3],['f3','18:30',8.8],['f4','Include WeKnora v0.8.2',9.4]];
+    const F=[['f0','WangXiaoZhi Demo',5.0],['f1','13800000000',5.8],['f2','demo@wangxiaozhi.local',6.5],['r1',null,7.4],['c0',null,7.9],['c1',null,8.3],['f3','18:30',8.8],['f4','Include WangXiaoZhi v0.8.2',9.4]];
     // positions of targets in chrome coords
     const POS={f0:[300,176],f1:[270,220],f2:[320,264],r1:[190,334],c0:[92,400],c1:[190,400],f3:[330,448],f4:[160,500]};
     F.forEach(([id,val,a],k)=>{const el=$(id);if(val!==null){const nxt=k+1<F.length?F[k+1][2]:99;el.textContent=typed(val,L,a+.2,26);el.classList.toggle('act',L>=a&&L<nxt)}else el.classList.toggle('on',L>=a+.15)});
@@ -846,7 +846,7 @@ function render(t){
     const A=$('outA');const ao=1-lin(lt,6.4,7.0);A.style.opacity=ao;
     const hd=A.querySelector('.hd').children;show(hd[0],P(lt,.3,.6),10);show(hd[1],P(lt,.45,.7),16);show(hd[2],P(lt,.7,.7),12);
     const tw=A.querySelector('.termw');const tp=P(lt,.9,.8);tw.style.opacity=tp;tw.style.transform=`translateY(${(1-tp)*40}px)`;
-    const L1='git clone https://github.com/Tencent/WeKnora.git',L2='cd WeKnora && cp .env.example .env',L3='docker compose up -d';
+    const L1='git clone https://github.com/wangxiaozhi/WangXiaoZhi.git',L2=`cd WangXiaoZhi && cp .env.example .env`,L3='docker compose up -d';
     const a1=1.5,a2=a1+L1.length/40+.3,a3=a2+L2.length/40+.3,a4=a3+L3.length/40+.4;
     let o=`<span class="p">$</span> ${typed(L1,lt,a1,40)}`;
     if(lt>a2-.1)o+=`\n<span class="p">$</span> ${typed(L2,lt,a2,40)}`;

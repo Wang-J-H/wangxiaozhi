@@ -4,7 +4,7 @@ Logos identify supported integrations and the teams or products featured in the 
 
 Paths below written as `public/brand/…`, `public/brands/…` and `public/product/…` live under `public/docs/_home/`, so the site serves them from `/docs/_home/` next to the rest of the documentation.
 
-- WangXiaoZhi logo: `docs/images/logo.png` from the WangXiaoZhi repository (the README logo), copied unchanged to `public/brand/weknora-original.png`. The site preserves all lettering, graphics and proportions. CSS hides only the empty outer canvas and blends the white background into the page; dark mode uses an inverted presentation with hue rotation. The source image remains unchanged.
+- WangXiaoZhi logo: `public/brand/wangxiaozhi-wordmark.png`, the WangXiaoZhi wordmark on a white canvas, in the same 945x650 frame as the previous logo so header sizing is unchanged. CSS hides only the empty outer canvas and blends the white background into the page; dark mode uses an inverted presentation with hue rotation.
 - WangXiaoZhi browser icon: copied unchanged from the existing product's `frontend/public/favicon.ico` into the documentation (`/docs/favicon.ico`), which the homepage also uses. The replacement square sail SVG is no longer shipped.
 - Feishu, GitLab, Tencent IMA, Notion, Yuque, RSS, WeCom, Slack, Telegram: copied unchanged from the WangXiaoZhi frontend asset library.
 - Seafile: copied unchanged from `frontend/src/assets/img/datasource-seafile.png` to `public/brands/seafile.png`.
@@ -20,13 +20,13 @@ Paths below written as `public/brand/…`, `public/brands/…` and `public/produ
 
 ## Community showcase
 
-The eight logos below were copied from the maintainer-supplied `素材包.zip` on 2026-10-29. They are served locally from `public/docs/_home/adopters/`, preserving the original artwork and proportions; only trailing whitespace in the Lighthouse SVG was normalized. Cards and company names follow the site theme; only the logo image has a light backing, softened to blue-gray in dark mode. Multiply blending merges white image backgrounds into that backing without inverting or redrawing the marks. `app/adopters.ts` contains concise display copy based on the supplied use cases and [the public showcase issue](https://github.com/your-org/WangXiaoZhi/issues/4801).
+The eight logos below were copied from the maintainer-supplied `素材包.zip` on 2026-10-29. They are served locally from `public/docs/_home/adopters/`, preserving the original artwork and proportions; only trailing whitespace in the Lighthouse SVG was normalized. Cards and company names follow the site theme; only the logo image has a light backing, softened to blue-gray in dark mode. Multiply blending merges white image backgrounds into that backing without inverting or redrawing the marks. `app/adopters.ts` contains concise display copy based on the supplied use cases and [the public showcase issue](https://github.com/wangxiaozhi/WangXiaoZhi/issues/4801).
 
 | Brand | Supplied file | Local file | Source |
 | --- | --- | --- | --- |
-| 赛乐医疗 / Sifary | `img/01_logo.svg` | `sifary.svg` | [Community submission](https://github.com/your-org/WangXiaoZhi/issues/4801#issuecomment-6439352798) |
-| 出版人杂志社 / China Publishers | `img/02_logo.png` | `china-publishers.png` | [Community submission](https://github.com/your-org/WangXiaoZhi/issues/4801#issuecomment-6440012673) |
-| 智达创客 | `img/03_logo.png` | `zhida-chuangke.png` | [Community submission](https://github.com/your-org/WangXiaoZhi/issues/4801#issuecomment-6464362211) |
+| 赛乐医疗 / Sifary | `img/01_logo.svg` | `sifary.svg` | [Community submission](https://github.com/wangxiaozhi/WangXiaoZhi/issues/4801#issuecomment-6439352798) |
+| 出版人杂志社 / China Publishers | `img/02_logo.png` | `china-publishers.png` | [Community submission](https://github.com/wangxiaozhi/WangXiaoZhi/issues/4801#issuecomment-6440012673) |
+| 智达创客 | `img/03_logo.png` | `zhida-chuangke.png` | [Community submission](https://github.com/wangxiaozhi/WangXiaoZhi/issues/4801#issuecomment-6464362211) |
 | 腾讯云 ClawPro | `img/04_ClawPro.svg` | `clawpro.svg` | Maintainer collection |
 | 光子工作室群 | `img/05_logo.png` | `lightspeed.png` | Maintainer collection |
 | 腾讯客服 | `img/06_logo.png` | `tencent-customer-service.png` | Maintainer collection |

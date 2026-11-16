@@ -29,7 +29,7 @@ onUnmounted(() => document.removeEventListener('keydown', closeMenu))
 <template>
   <header class="wk-header wk-docs-header">
     <div class="wk-header-inner">
-      <a class="wk-brand" href="/" target="_self" aria-label="WangXiaoZhi 首页"><span class="wk-logo"><img :src="`${homeAssets}/brand/weknora-original.png`" alt="WangXiaoZhi" width="945" height="650"></span></a>
+      <a class="wk-brand" href="/" target="_self" aria-label="WangXiaoZhi 首页"><span class="wk-logo"><img :src="`${homeAssets}/brand/wangxiaozhi-wordmark.png`" alt="WangXiaoZhi" width="945" height="650"></span></a>
       <nav id="main-navigation" class="wk-navigation" :class="{ 'is-open': open }" aria-label="文档导航">
         <a v-for="item in docsNavigation" :key="item.href" :href="item.href" :aria-current="route.path.startsWith(item.section) ? 'page' : undefined" @click="open = false">{{ item.label }}</a>
         <div class="wk-header-search"><Search /></div>

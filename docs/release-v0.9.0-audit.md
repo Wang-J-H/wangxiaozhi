@@ -152,7 +152,7 @@
 
 - [发布说明](../website-docs/07-releases/v0.9.0.md)与[通知正文](release-v0.9.0-announcement.md)。
 - [六张截图](../website-docs/public/screenshots/)及虚构演示资料。
-- [英文动画 MP4](../website-docs/public/videos/weknora-v0.9.0-en.mp4)、[封面](../website-docs/public/videos/weknora-v0.9.0-poster.png)、[英文字幕](../website-docs/public/videos/weknora-v0.9.0-en.srt)及可编辑动画源码。
+- [英文动画 MP4](../website-docs/public/videos/wangxiaozhi-v0.9.0-en.mp4)、[封面](../website-docs/public/videos/wangxiaozhi-v0.9.0-poster.png)、[英文字幕](../website-docs/public/videos/wangxiaozhi-v0.9.0-en.srt)及可编辑动画源码。
 - 静态站和媒体包通过网站 README 中的打包流程生成；`website-docs/releases/` 为忽略的本地构建目录。
 
 ## 正式发布前的最后步骤
