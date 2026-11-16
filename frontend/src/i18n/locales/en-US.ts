@@ -3117,7 +3117,7 @@ export default {
     firstTime: 'New to WangXiaoZhi?',
     registerSuccess: 'Registration successful. Please sign in',
     registerFailed: 'Registration failed',
-    subtitle: 'RAG Q&A, ReAct Agent and Wiki — an LLM-powered enterprise knowledge framework',
+    subtitle: '',
     registerSubtitle: 'Create your account and start using WangXiaoZhi',
     emailPlaceholder: 'Enter email address',
     passwordPlaceholder: 'Enter password',
@@ -5758,7 +5758,7 @@ export default {
       }
     },
     platform: {
-      subtitle: 'LLM-Powered Enterprise Knowledge Framework',
+      subtitle: 'An intelligent assistant built to meet agency requirements',
       description: 'RAG retrieval, agentic reasoning and Wiki knowledge bases — so your documents are truly understood and put to work',
       rag: 'RAG Enhanced Generation',
       agent: 'ReAct Agent',

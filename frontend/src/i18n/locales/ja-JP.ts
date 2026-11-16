@@ -3117,7 +3117,7 @@ export default {
     firstTime: 'WangXiaoZhiは初めてですか？',
     registerSuccess: '登録が完了しました。ログインしてください',
     registerFailed: '登録に失敗しました',
-    subtitle: 'RAG質問応答、ReActエージェント、Wiki。LLMが支える企業向けナレッジフレームワーク',
+    subtitle: '',
     registerSubtitle: 'アカウントを作成してWangXiaoZhiを使い始めましょう',
     emailPlaceholder: 'メールアドレスを入力',
     passwordPlaceholder: 'パスワードを入力',
@@ -5758,7 +5758,7 @@ export default {
       }
     },
     platform: {
-      subtitle: 'LLM駆動のエンタープライズ向けナレッジフレームワーク',
+      subtitle: '行政機関の要件に対応するインテリジェントアシスタント',
       description: 'RAG検索、エージェント推論、Wikiナレッジベースにより、ドキュメントを本当に理解し活用できます',
       rag: 'RAG拡張生成',
       agent: 'ReActエージェント',
