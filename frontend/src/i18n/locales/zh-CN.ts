@@ -4144,7 +4144,7 @@ export default {
     pinned: '已置顶'
   },
   platform: {
-    subtitle: '大模型驱动的企业级知识框架',
+    subtitle: '响应机关要求的智能助手',
     description: 'RAG 检索、智能体推理、Wiki 知识库，让文档真正被理解和运用',
     rag: 'RAG 增强生成',
     agent: 'ReAct 智能体',
@@ -6790,7 +6790,7 @@ export default {
     firstTime: '首次使用 WangXiaoZhi？',
     registerSuccess: '注册成功，请登录',
     registerFailed: '注册失败',
-    subtitle: 'RAG 问答、ReAct 智能体与 Wiki 知识库，大模型驱动的企业级知识框架',
+    subtitle: '',
     registerSubtitle: '创建账户并开始使用 WangXiaoZhi',
     emailPlaceholder: '输入邮箱地址',
     passwordPlaceholder: '输入密码',

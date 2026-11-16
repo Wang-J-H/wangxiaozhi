@@ -100,26 +100,8 @@
       <img src="@/assets/img/wangxiaozhi-logo.svg" alt="WangXiaoZhi" class="logo-image" />
     </a>
 
-    <!-- Header Links - Top Right -->
+    <!-- Header Links - Top Right：仅保留语言切换 -->
     <div class="header-links">
-      <a href="#" target="_blank" class="header-link" :title="$t('common.website')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="2" y1="12" x2="22" y2="12" />
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-        </svg>
-        <span class="link-text">{{ $t('common.website') }}</span>
-      </a>
-
-      <a href="#" target="_blank" class="header-link" :title="$t('common.info')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-          <path
-            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-        </svg>
-        <span class="link-text">GitHub</span>
-      </a>
-
       <div class="language-switch">
         <button @click="toggleLanguageMenu" class="header-link" :title="currentLangOption?.label">
           <span class="lang-flag-icon">{{ currentLangOption?.flag }}</span>
@@ -194,7 +176,7 @@
           </div>
           <div class="form-header">
             <h2 class="form-title">{{ $t('auth.login') }}</h2>
-            <p class="form-welcome">{{ $t('auth.subtitle') }}</p>
+            <p v-if="$t('auth.subtitle')" class="form-welcome">{{ $t('auth.subtitle') }}</p>
             <p v-if="registrationEnabled" class="form-hint">{{ $t('auth.loginHint') }}</p>
           </div>
 
@@ -829,9 +811,13 @@ onMounted(async () => {
 <style lang="less" scoped>
 .login-layout {
   display: flex;
+  align-items: center;
   width: 100%;
-  min-height: 100%;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
   position: relative;
   background: linear-gradient(225deg, #02162c 0%, #06284e 15%, #06315f 25%, #043c78 38%, #054c96 50%, #076ec0 65%, #1064b9 78%, #3484d3 90%, #6eace7 100%);
 
@@ -1061,10 +1047,12 @@ onMounted(async () => {
 .showcase-section {
   flex: 0 0 52%;
   display: flex;
-  align-items: flex-end;
-  padding: 100px 30px 100px 50px;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vh, 100px) 30px clamp(24px, 5vh, 100px) 50px;
   box-sizing: border-box;
   position: relative;
+  min-height: 0;
 }
 
 .showcase-content {
@@ -1074,7 +1062,7 @@ onMounted(async () => {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  margin-bottom: 60px;
+  margin-bottom: 0;
 }
 
 .showcase-subtitle {
@@ -1173,9 +1161,9 @@ onMounted(async () => {
 .form-section {
   flex: 0 0 48%;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding: 112px 50px 100px 30px;
+  padding: clamp(24px, 6vh, 112px) 50px clamp(24px, 5vh, 100px) 30px;
   box-sizing: border-box;
   position: relative;
 }
@@ -1183,7 +1171,7 @@ onMounted(async () => {
 .form-panel {
   width: 100%;
   max-width: 480px;
-  margin-bottom: 60px;
+  margin-bottom: 0;
   position: relative;
   z-index: 2;
 }
@@ -1198,6 +1186,8 @@ onMounted(async () => {
   .logo-image {
     width: 120px;
     height: auto;
+    // 登录页底为深蓝渐变，logo 统一渲染为白色
+    filter: brightness(0) invert(1);
   }
 }
 
@@ -1671,7 +1661,11 @@ onMounted(async () => {
 @media (max-width: 768px) {
   .login-layout {
     flex-direction: column;
+    align-items: stretch;
+    min-height: 100vh;
+    min-height: 100dvh;
     padding-top: 64px;
+    padding-bottom: 32px;
     box-sizing: border-box;
   }
 

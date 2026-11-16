@@ -1,10 +1,8 @@
 name: Build and Push Docker Image
 on:
-  push:
-    tags:
-      - "v*"
-    branches:
-      - main
+  # 仅手动触发：本仓库未配置 Docker Hub 凭据，自动触发只会产生失败记录。
+  # 需要发布镜像时，到 Actions 页面 Run workflow。
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,7 +37,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-ui
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-ui
 
       - name: Build ui Image
         uses: docker/build-push-action@v7
@@ -97,7 +95,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-docreader
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-docreader
 
       - name: Build docreader Image
         uses: docker/build-push-action@v7
@@ -133,7 +131,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-sandbox
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-sandbox
 
       - name: Build sandbox Image
         uses: docker/build-push-action@v7
@@ -154,7 +152,7 @@ jobs:
         id: meta-cube
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-sandbox
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-sandbox
           flavor: |
             suffix=-cube,onlatest=true
 
@@ -175,7 +173,7 @@ jobs:
         id: meta-desktop
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-sandbox
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-sandbox
           flavor: |
             suffix=-desktop,onlatest=true
 
@@ -196,7 +194,7 @@ jobs:
         id: meta-desktop-cube
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-sandbox
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-sandbox
           flavor: |
             suffix=-desktop-cube,onlatest=true
 
@@ -242,7 +240,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-app
 
       - name: Prepare version info
         id: version
@@ -272,7 +270,7 @@ jobs:
             ${{ format('BUILD_TIME_ARG={0}', steps.version.outputs.build_time) }}
             WITH_ANYDOC=1
           labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-app
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-app
           cache-from: type=gha,scope=build-app-${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,scope=build-app-${{ env.PLATFORM_PAIR }},mode=max
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
@@ -316,14 +314,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/weknora-app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-app
 
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ secrets.DOCKERHUB_USERNAME }}/weknora-app@sha256:%s ' *)
+            $(printf '${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-app@sha256:%s ' *)
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ secrets.DOCKERHUB_USERNAME }}/weknora-app:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ secrets.DOCKERHUB_USERNAME }}/wangxiaozhi-app:${{ steps.meta.outputs.version }}
