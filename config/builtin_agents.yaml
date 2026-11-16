@@ -80,7 +80,6 @@ builtin_agents:
         - "list_documents"
         - "query_knowledge_graph"
         - "ask_user"
-        - "gis_risk_query"
       web_search_enabled: true
       web_search_max_results: 5
       reflection_enabled: false

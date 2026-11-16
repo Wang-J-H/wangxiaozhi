@@ -18,7 +18,6 @@ export type DisplayType =
     | 'thinking'
     | 'plan'
     | 'database_query'
-    | 'gis_map'
     | 'web_search_results'
     | 'web_fetch_results'
     | 'grep_results'
