@@ -1516,6 +1516,9 @@ func (s *agentService) registerTools(
 			toolToRegister = tools.NewSearchMemoryTool(s.memoryService)
 		case tools.ToolDatabaseQuery:
 			toolToRegister = tools.NewDatabaseQueryTool(s.db, config.SearchTargets)
+		case tools.ToolGISRiskQuery:
+			toolToRegister = tools.NewGISRiskQueryTool(s.db)
+			logger.Infof(ctx, "Registered gis_risk_query tool for session: %s", sessionID)
 		case tools.ToolWebSearch:
 			toolToRegister = tools.NewWebSearchTool(webClient, config.WebSearchMaxResults)
 			logger.Infof(ctx, "Registered web_search tool for session: %s, maxResults: %d, providerID: %s", sessionID, config.WebSearchMaxResults, config.WebSearchProviderID)
