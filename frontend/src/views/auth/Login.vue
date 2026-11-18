@@ -1,97 +1,38 @@
 <template>
   <div class="login-layout">
-    <div class="animated-bg">
-      <div class="knowledge-node node-1">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-2">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-3">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-4">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <ellipse cx="12" cy="5" rx="9" ry="3" />
-          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-5">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-6">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path
-            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-          <line x1="12" y1="22.08" x2="12" y2="12" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-7">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-8">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-9">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-10">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3" />
-          <path
-            d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-11">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 11l3 3L22 4" />
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-        </svg>
-      </div>
-      <div class="knowledge-node node-12">
-        <svg class="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon
-            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      </div>
-
-      <svg class="knowledge-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <line class="connection-line line-1" x1="20" y1="15" x2="35" y2="25" />
-        <line class="connection-line line-2" x1="35" y1="25" x2="55" y2="20" />
-        <line class="connection-line line-3" x1="55" y1="20" x2="85" y2="12" />
-        <line class="connection-line line-4" x1="8" y1="35" x2="25" y2="45" />
-        <line class="connection-line line-5" x1="25" y1="45" x2="65" y2="48" />
-        <line class="connection-line line-6" x1="20" y1="60" x2="60" y2="75" />
-        <line class="connection-line line-7" x1="20" y1="15" x2="20" y2="60" />
-        <line class="connection-line line-8" x1="55" y1="20" x2="45" y2="50" />
-        <line class="connection-line line-9" x1="65" y1="48" x2="90" y2="38" />
-        <line class="connection-line line-10" x1="40" y1="70" x2="75" y2="80" />
-        <line class="connection-line line-11" x1="35" y1="25" x2="25" y2="45" />
-        <line class="connection-line line-12" x1="75" y1="30" x2="65" y2="48" />
+    <!-- 科技风背景（纯静态，无动画）：深色底 + 网格 + 光晕 + 节点连线 -->
+    <div class="animated-bg" aria-hidden="true">
+      <div class="bg-grid"></div>
+      <div class="bg-glow bg-glow--a"></div>
+      <div class="bg-glow bg-glow--b"></div>
+      <div class="bg-glow bg-glow--c"></div>
+      <svg class="bg-mesh" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="wxzMeshLine" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#38BDF8" stop-opacity="0.55" />
+            <stop offset="1" stop-color="#22D3EE" stop-opacity="0.12" />
+          </linearGradient>
+        </defs>
+        <g class="mesh-lines" stroke="url(#wxzMeshLine)" stroke-width="1" fill="none">
+          <path d="M100 640 L300 520 L520 560 L700 420" />
+          <path d="M300 520 L360 320 L560 240" />
+          <path d="M700 420 L900 470 L1080 360" />
+          <path d="M520 560 L620 700" />
+          <path d="M560 240 L780 180 L980 220" />
+        </g>
+        <g class="mesh-nodes" fill="#7DD3FC">
+          <circle cx="100" cy="640" r="3" />
+          <circle cx="300" cy="520" r="4.5" />
+          <circle cx="520" cy="560" r="3" />
+          <circle cx="700" cy="420" r="5" />
+          <circle cx="360" cy="320" r="3" />
+          <circle cx="560" cy="240" r="4" />
+          <circle cx="900" cy="470" r="3" />
+          <circle cx="1080" cy="360" r="4.5" />
+          <circle cx="620" cy="700" r="3" />
+          <circle cx="780" cy="180" r="3" />
+          <circle cx="980" cy="220" r="4" />
+        </g>
       </svg>
     </div>
 
@@ -139,14 +80,11 @@
 
         <!-- Swiper Carousel -->
         <div class="carousel-container">
-          <swiper :modules="modules" :slides-per-view="1" :loop="true" :autoplay="{
-            delay: 4000,
-            disableOnInteraction: false,
-          }" :effect="'fade'" :fade-effect="{ crossFade: true }"
-            :pagination="{ clickable: true, dynamicBullets: false }" :speed="800" class="screenshot-swiper">
+          <swiper :modules="modules" :slides-per-view="1" :loop="false" :effect="'slide'"
+            :pagination="{ clickable: true, dynamicBullets: false }" :speed="400" class="screenshot-swiper">
             <swiper-slide v-for="(slide, index) in slides" :key="index">
               <div class="slide-content">
-                <img :src="slide.image" :alt="slide.title" class="slide-image" />
+                <img :src="slide.image" :alt="slide.title" class="slide-image" decoding="async" />
               </div>
             </swiper-slide>
           </swiper>
@@ -327,9 +265,8 @@ import { notifyLoginSuccess } from '@/utils/loginNotify'
 import { canRegister } from './registrationPolicy'
 import { newPasswordRules } from '@/utils/passwordPolicy'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
+import { Pagination } from 'swiper/modules'
 import 'swiper/css'
-import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
 import {
   login,
@@ -360,7 +297,7 @@ const { t, tm, locale } = useI18n()
 const { formatRole, roleIcon } = useRoleLabel()
 
 // Swiper modules
-const modules = [Autoplay, EffectFade, Pagination]
+const modules = [Pagination]
 
 // Carousel slides data
 const slides = [
@@ -819,7 +756,7 @@ onMounted(async () => {
   overflow-y: auto;
   box-sizing: border-box;
   position: relative;
-  background: linear-gradient(225deg, #02162c 0%, #06284e 15%, #06315f 25%, #043c78 38%, #054c96 50%, #076ec0 65%, #1064b9 78%, #3484d3 90%, #6eace7 100%);
+  background: radial-gradient(ellipse 90% 70% at 18% 12%, #0b3a6b 0%, transparent 60%), radial-gradient(ellipse 80% 60% at 88% 88%, #084669 0%, transparent 58%), linear-gradient(160deg, #010a16 0%, #031a33 32%, #04223f 58%, #062b4c 82%, #083252 100%);
 
   &::before {
     content: '';
@@ -846,201 +783,63 @@ onMounted(async () => {
   contain: strict;
 }
 
-.knowledge-node {
+.bg-grid {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(125, 211, 252, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(125, 211, 252, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 100% 85% at 50% 45%, #000 22%, transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 85% at 50% 45%, #000 22%, transparent 82%);
+}
+
+/* 光晕：用静态径向渐变代替 blur() + 位移动画（GPU 开销极低） */
+.bg-glow {
+  position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 0 15px rgba(255, 255, 255, 0.35),
-    0 0 30px rgba(16, 185, 129, 0.2),
-    inset 0 0 8px rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: nodePulse 5s infinite ease-in-out;
-  will-change: transform, opacity;
+  pointer-events: none;
 }
 
-.node-icon {
-  width: 20px;
-  height: 20px;
-  color: rgba(255, 255, 255, 0.9);
+.bg-glow--a {
+  width: 48vw;
+  height: 48vw;
+  left: -14vw;
+  top: -18vw;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(56, 189, 248, 0.1) 38%, rgba(56, 189, 248, 0) 70%);
 }
 
-.node-1 {
-  top: 15%;
-  left: 20%;
-  animation-delay: 0s;
+.bg-glow--b {
+  width: 44vw;
+  height: 44vw;
+  right: -14vw;
+  bottom: -16vw;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.22) 0%, rgba(34, 211, 238, 0.08) 40%, rgba(34, 211, 238, 0) 72%);
 }
 
-.node-2 {
-  top: 25%;
-  left: 35%;
-  animation-delay: 0.5s;
-}
-
-.node-3 {
-  top: 20%;
-  left: 55%;
-  animation-delay: 1s;
-}
-
-.node-4 {
-  top: 30%;
-  left: 75%;
-  animation-delay: 1.5s;
-}
-
-.node-5 {
-  top: 45%;
-  left: 25%;
-  animation-delay: 2s;
-}
-
-.node-6 {
-  top: 50%;
-  left: 45%;
-  animation-delay: 2.5s;
-}
-
-.node-7 {
-  top: 48%;
-  left: 65%;
-  animation-delay: 3s;
-}
-
-.node-8 {
-  top: 60%;
-  left: 20%;
-  animation-delay: 0.3s;
-}
-
-.node-9 {
-  top: 12%;
-  right: 15%;
-  animation-delay: 1.8s;
-}
-
-.node-10 {
-  top: 38%;
-  right: 10%;
-  animation-delay: 2.3s;
-}
-
-.node-11 {
-  top: 70%;
+.bg-glow--c {
+  width: 34vw;
+  height: 34vw;
   left: 40%;
-  animation-delay: 0.8s;
+  top: 34%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(99, 102, 241, 0.05) 42%, rgba(99, 102, 241, 0) 74%);
 }
 
-.node-12 {
-  top: 65%;
-  left: 80%;
-  animation-delay: 1.3s;
-}
-
-@keyframes nodePulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.65;
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 0.9;
-  }
-}
-
-.knowledge-lines {
+.bg-mesh {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.35;
+  opacity: 0.85;
 }
 
-.connection-line {
-  stroke: rgba(255, 255, 255, 0.5);
-  stroke-width: 1.5;
-  stroke-dasharray: 6, 3;
-  stroke-linecap: round;
-  animation: lineFlow 10s infinite linear;
-  will-change: stroke-dashoffset;
+/* 静态虚线：不做 stroke-dashoffset 动画，避免持续重绘 */
+.mesh-lines path {
+  stroke-dasharray: 6 10;
 }
 
-.line-1 {
-  animation-delay: 0s;
-}
-
-.line-2 {
-  animation-delay: 0.5s;
-}
-
-.line-3 {
-  animation-delay: 1s;
-}
-
-.line-4 {
-  animation-delay: 0.3s;
-}
-
-.line-5 {
-  animation-delay: 0.8s;
-}
-
-.line-6 {
-  animation-delay: 1.3s;
-}
-
-.line-7 {
-  animation-delay: 1.8s;
-}
-
-.line-8 {
-  animation-delay: 2.3s;
-}
-
-.line-9 {
-  animation-delay: 0.2s;
-}
-
-.line-10 {
-  animation-delay: 0.7s;
-}
-
-.line-11 {
-  animation-delay: 0.9s;
-}
-
-.line-12 {
-  animation-delay: 1.5s;
-}
-
-@keyframes lineFlow {
-  0% {
-    stroke-dashoffset: 0;
-  }
-
-  100% {
-    stroke-dashoffset: 18;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .knowledge-node {
-    animation: none;
-    opacity: 0.65;
-  }
-
-  .connection-line {
-    animation: none;
-  }
+.mesh-nodes circle {
+  opacity: 0.75;
 }
 
 /* Left Showcase Section */
@@ -1621,14 +1420,6 @@ onMounted(async () => {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .knowledge-node:nth-of-type(n + 13) {
-    display: none;
-  }
-
-  .connection-line:nth-of-type(n + 13) {
-    display: none;
-  }
-
   .showcase-subtitle {
     font-size: var(--app-text-2xl);
   }
@@ -1667,14 +1458,6 @@ onMounted(async () => {
     padding-top: 64px;
     padding-bottom: 32px;
     box-sizing: border-box;
-  }
-
-  .knowledge-node:nth-of-type(n + 9) {
-    display: none;
-  }
-
-  .connection-line:nth-of-type(n + 9) {
-    display: none;
   }
 
   .showcase-section {
@@ -1795,35 +1578,14 @@ onMounted(async () => {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-  .knowledge-node,
-  .connection-line {
-    animation: none !important;
-    transition: none !important;
-  }
-
-  .animated-bg {
-    display: none;
-  }
-}
 </style>
 
 <style lang="less">
 html[theme-mode="dark"] {
   .login-layout {
-    background: linear-gradient(225deg, #010d1a 0%, #03182e 15%, #041d3a 25%, #052850 38%, #043466 50%, #03488a 65%, #04519b 78%, #0653a0 90%, #075cb0 100%);
+    background: radial-gradient(ellipse 90% 70% at 18% 12%, #0a2a4d 0%, transparent 60%), radial-gradient(ellipse 80% 60% at 88% 88%, #063348 0%, transparent 58%), linear-gradient(160deg, #00060d 0%, #02101f 32%, #031726 58%, #041c2e 82%, #052232 100%);
   }
 
-  .knowledge-node {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-  }
-
-  .connection-line {
-    stroke: rgba(255, 255, 255, 0.25);
-  }
 
 
   .header-link {
