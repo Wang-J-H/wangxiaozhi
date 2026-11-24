@@ -30,6 +30,7 @@ const (
 	ToolSearchConversations = "search_conversations"
 	ToolSearchMemory        = "search_memory"
 	ToolDatabaseQuery       = "database_query"
+	ToolGISRiskQuery        = "gis_risk_query"
 	ToolDataAnalysis        = "data_analysis"
 	ToolDataSchema          = "data_schema"
 	ToolWebSearch           = "web_search"
@@ -134,6 +135,7 @@ func AvailableToolDefinitions() []AvailableTool {
 		{Name: ToolListDocuments, Label: "浏览文档列表", Description: "分页列出知识库中的文档", Group: ToolGroupRAG},
 		{Name: ToolQueryKnowledgeGraph, Label: "查询知识图谱", Description: "从知识图谱中查询关系", Group: ToolGroupRAG},
 		{Name: ToolDatabaseQuery, Label: "查询数据库", Description: "查询数据库中的信息", Group: ToolGroupRAG},
+		{Name: ToolGISRiskQuery, Label: "查询园区风险", Description: "查询园区传感器告警并在地图上标注风险点", Group: ToolGroupData},
 		{Name: ToolWikiSearch, Label: "搜索Wiki", Description: "在Wiki中搜索页面", Group: ToolGroupWikiRead},
 		{Name: ToolWikiReadPage, Label: "读取Wiki页面", Description: "读取指定的Wiki页面内容", Group: ToolGroupWikiRead},
 		{
@@ -217,6 +219,7 @@ func DefaultAllowedTools() []string {
 		// Asking the user only reaches someone on clients that render the
 		// card; elsewhere the tool tells the model to ask in its reply.
 		ToolAskUser,
+		ToolGISRiskQuery,
 		// ToolSearchMemory is deliberately absent here and from
 		// AvailableToolDefinitions. Like web_search it is not chosen from this
 		// list at all: registerTools injects it whenever the workspace, the

@@ -19,6 +19,9 @@
     <!-- Graph Query Results -->
     <GraphQueryResults v-else-if="displayType === 'graph_query_results'" :data="toolData as GraphQueryResultsData" />
 
+    <!-- GIS Map -->
+    <MapResult v-else-if="displayType === 'gis_map'" :data="toolData" />
+
     <!-- Thinking Display -->
     <ThinkingDisplay v-else-if="displayType === 'thinking'" :data="toolData as ThinkingData" />
 
@@ -160,6 +163,7 @@ import RelatedChunks from './tool-results/RelatedChunks.vue';
 import KnowledgeBaseList from './tool-results/KnowledgeBaseList.vue';
 import DocumentInfo from './tool-results/DocumentInfo.vue';
 import GraphQueryResults from './tool-results/GraphQueryResults.vue';
+import MapResult from './tool-results/MapResult.vue';
 import ThinkingDisplay from './tool-results/ThinkingDisplay.vue';
 import PlanDisplay from './tool-results/PlanDisplay.vue';
 import DatabaseQuery from './tool-results/DatabaseQuery.vue';

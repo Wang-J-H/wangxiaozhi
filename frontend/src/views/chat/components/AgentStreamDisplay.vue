@@ -510,6 +510,7 @@
                 <div v-stable-html="renderAnswerContent(event === activeAnswerEventRef ? typedAnswer : event.content)">
                 </div>
               </div>
+              <MapResult v-if="event.done && gisMapData" :data="gisMapData" class="answer-gis-map" />
               <div v-if="event === pinnedAnswerEvent && (pinnedPageLinks.length > 0 || pinnedPageEdits.length > 0)"
                 class="answer-page-links">
                 <OpenPageCard v-for="link in pinnedPageLinks" :key="link.tool_call_id" :link="link.tool_data" />
@@ -794,6 +795,7 @@ import { marked } from 'marked';
 import 'katex/dist/katex.min.css';
 import SandboxCommandProgress from '@/components/SandboxCommandProgress.vue';
 import ToolResultRenderer from './ToolResultRenderer.vue';
+import MapResult from './tool-results/MapResult.vue';
 import CollaborationTasks from './CollaborationTasks.vue';
 import { childAgentTabsKey, childAgentTaskLookupKey } from '@/composables/useChildAgentTabs';
 import { useChildAgentViewer } from '@/composables/useChildAgentViewer';
@@ -1475,6 +1477,7 @@ const resolveToolDisplayType = (event: any): DisplayType | undefined => {
   if (mcpType) return mcpType
   const catalogType = getCatalogToolDisplayType(event?.tool_name)
   if (catalogType) return catalogType
+  if (event?.tool_name === 'gis_risk_query') return 'gis_map'
   if (event?.display_type) return event.display_type as DisplayType
   if (event?.tool_name === 'shell_exec' || event?.tool_name === 'shell_exec_async' ||
       event?.tool_name === 'execute_skill_script') {
@@ -2480,6 +2483,18 @@ const getEventKey = (event: any, index: number): string => {
 };
 
 const timelineEvents = computed(() => attachReasoningToTools(displayEvents.value, canAttachReasoning));
+
+// 把 gis_risk_query 的地图结果提升到最终回答里展示（而不是藏在思考轨迹中）。
+// 注意：回答完成后 displayEvents/timelineEvents 只保留 answer 事件，tool_call 被折叠进
+// 思考树，所以必须从完整事件流里找工具结果。
+const gisMapData = computed(() => {
+  const stream = eventStream.value;
+  if (!stream || !Array.isArray(stream)) return null;
+  const ev = buildFullEventList(stream).find(
+    (e: any) => e?.type === 'tool_call' && e?.tool_name === 'gis_risk_query' && e?.tool_data?.geojson,
+  );
+  return ev?.tool_data || null;
+});
 
 // Long runs keep only their latest steps in view; anything still waiting on
 // the agent or the user stays out of the fold.
