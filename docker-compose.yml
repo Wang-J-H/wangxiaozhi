@@ -40,7 +40,14 @@ services:
       dockerfile: docker/Dockerfile.app
       args:
         - APK_MIRROR_ARG=${APK_MIRROR_ARG:-}
+        # Go 模块代理。Dockerfile 声明了 GOPROXY_ARG 但未设默认值，
+        # 国内直连 proxy.golang.org 会在 go install migrate 一步超时失败；
+        # 这里把 .env 的值透传进去。
+        - GOPROXY_ARG=${GOPROXY_ARG:-}
         - WITH_ANYDOC=${WITH_ANYDOC:-1}
+        # Rust / crates.io 镜像（anydoc 构建需要 Rust 工具链，国内直连易超时）。
+        - RUSTUP_DIST_SERVER_ARG=${RUSTUP_DIST_SERVER_ARG:-}
+        - CARGO_REGISTRY_MIRROR_ARG=${CARGO_REGISTRY_MIRROR_ARG:-}
         # Build metadata shown on the system-info page. start_all.sh injects
         # these from git and the VERSION file; with a plain `docker compose
         # build` leave them unset (version falls back to the VERSION file,

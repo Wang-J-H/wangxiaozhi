@@ -15,13 +15,24 @@ RUN if [ -n "$APK_MIRROR_ARG" ]; then \
     apt-get update && \
     apt-get install -y --no-install-recommends git python3 ca-certificates curl build-essential cmake pkg-config && \
     rm -rf /var/lib/apt/lists/*
-ENV RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo
-ENV PATH=/usr/local/cargo/bin:$PATH
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
-COPY scripts/build_browserskill.sh scripts/browserskill-release.json ./scripts/
 ARG TARGETOS
 ARG TARGETARCH
-RUN bash scripts/build_browserskill.sh /opt/weknora/browserskill "${TARGETOS}/${TARGETARCH}"
+# Prebuilt BrowserSkill from .build-cache/browserskill (bsk + extension zip).
+# The upstream build clones github.com/Tencent/BrowserSkill and compiles a
+# Rust daemon, which needs GitHub access and a full Rust toolchain at build
+# time. When scripts/prepare-browserskill-cache.sh has populated the cache,
+# reuse it; otherwise fall back to the original online build.
+COPY scripts/build_browserskill.sh scripts/browserskill-release.json ./scripts/
+COPY .build-cache/browserskill/ /opt/weknora/browserskill/
+RUN if [ -x /opt/weknora/browserskill/bsk ]; then \
+        echo "Using prebuilt BrowserSkill from .build-cache"; \
+    else \
+        echo "No prebuilt BrowserSkill, building from source"; \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable; \
+        export RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo; \
+        export PATH=/usr/local/cargo/bin:$PATH; \
+        bash scripts/build_browserskill.sh /opt/weknora/browserskill "${TARGETOS}/${TARGETARCH}"; \
+    fi
 
 # Build stage
 FROM golang:1.26-bookworm AS builder
@@ -76,9 +87,21 @@ ENV BUILD_TIME=${BUILD_TIME_ARG}
 ARG WITH_ANYDOC=1
 ENV RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
+# 国内直连 static.rust-lang.org / crates.io 较慢，可用镜像覆盖；留空走官方源。
+ARG RUSTUP_DIST_SERVER_ARG=
+ARG CARGO_REGISTRY_MIRROR_ARG=
 RUN if [ "$WITH_ANYDOC" = "1" ]; then \
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-            | sh -s -- -y --profile minimal --default-toolchain stable && \
+        set -e; \
+        export RUSTUP_DIST_SERVER="${RUSTUP_DIST_SERVER_ARG:-https://static.rust-lang.org}"; \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh; \
+        sh /tmp/rustup-init.sh -y --profile minimal --default-toolchain stable; \
+        if [ -n "$CARGO_REGISTRY_MIRROR_ARG" ]; then \
+            mkdir -p "$CARGO_HOME"; \
+            echo '[source.crates-io]' > "$CARGO_HOME/config.toml"; \
+            echo 'replace-with = "mirror"' >> "$CARGO_HOME/config.toml"; \
+            echo '[source.mirror]' >> "$CARGO_HOME/config.toml"; \
+            echo "registry = \"$CARGO_REGISTRY_MIRROR_ARG\"" >> "$CARGO_HOME/config.toml"; \
+        fi; \
         ./scripts/build-anydoc-lib.sh; \
     fi
 

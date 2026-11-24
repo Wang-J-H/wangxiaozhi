@@ -8,9 +8,11 @@ import (
 const (
 	defaultMaxFileSizeMB        = 50
 	defaultMaxSkillBundleSizeMB = 256
-	// maxSkillBundleSizeMBCeiling matches the install-time uncompressed
-	// archive cap: a download larger than that cannot become a valid skill.
-	maxSkillBundleSizeMBCeiling = 512
+	// maxSkillBundleSizeMBCeiling caps the operator-supplied skill bundle size.
+	// Kept at or above MAX_FILE_SIZE_MB in practice: when the knowledge-base
+	// upload cap is raised past the old 512 ceiling, a skill zip smaller than a
+	// legal document would be rejected for no reason.
+	maxSkillBundleSizeMBCeiling = 1024
 )
 
 // GetMaxFileSize returns the maximum file upload size in bytes.

@@ -51,7 +51,7 @@ fi
 
 # Include a patch revision so changes to our patches invalidate existing copies
 # even when the upstream anydoc version stays the same.
-anydoc_patch_id="$anydoc_version-zip9-v1"
+anydoc_patch_id="$anydoc_version-zip9-assetcap-v2"
 
 # Copy the pinned version, expose the official serializer, and upgrade zip to
 # the fixed major version (upstream anydoc 0.2.4 still requires zip ^8.6.0).
@@ -112,6 +112,31 @@ prepare_patched_anydoc() {
     exit 1
   fi
   mv "$dest/Cargo.toml.tmp" "$dest/Cargo.toml"
+
+  # Raise anydoc's internal asset/archive byte caps. Upstream hard-codes them
+  # (128 MiB per archive entry, 128 MiB of retained embedded assets) to stop
+  # decompression bombs, but real office documents routinely embed
+  # multi-hundred-megabyte OLE objects, which then fail with
+  # ResourceLimit{limit="max_asset_total_bytes"}. Input size is already bounded
+  # by MAX_FILE_SIZE_MB at the API and DOCREADER_GRPC_MAX_FILE_SIZE_MB at the
+  # gRPC boundary, so widening these does not widen the reachable attack
+  # surface beyond what the operator allowed.
+  limits_file="$dest/src/package/limits.rs"
+  if [ ! -f "$limits_file" ]; then
+    echo "error: anydoc $anydoc_version has no src/package/limits.rs to patch" >&2
+    exit 1
+  fi
+  if ! sed -i     -e 's/^pub const MAX_ENTRY_BYTES: u64 = 128 \* 1024 \* 1024;$/pub const MAX_ENTRY_BYTES: u64 = 1024 * 1024 * 1024;/'     -e 's/^pub const MAX_TOTAL_BYTES: u64 = 512 \* 1024 \* 1024;$/pub const MAX_TOTAL_BYTES: u64 = 4096 * 1024 * 1024;/'     -e 's/^pub const MAX_ASSET_TOTAL_BYTES: usize = 128 \* 1024 \* 1024;$/pub const MAX_ASSET_TOTAL_BYTES: usize = 1024 * 1024 * 1024;/'     "$limits_file"; then
+    echo "error: failed to rewrite $limits_file" >&2
+    exit 1
+  fi
+  # Fail loudly if the upstream constants move or change value, rather than
+  # silently shipping the stock caps again.
+  if ! grep -q '^pub const MAX_ASSET_TOTAL_BYTES: usize = 1024 \* 1024 \* 1024;$' "$limits_file"; then
+    echo "error: anydoc $anydoc_version max_asset_total_bytes patch did not apply" >&2
+    exit 1
+  fi
+
   printf '%s\n' "$anydoc_patch_id" > "$dest/.weknora-patched"
   rm -rf "$crate_dir/.anydoc-unpack" "$crate_dir/.anydoc-$anydoc_version.crate"
 }

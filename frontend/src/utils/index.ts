@@ -29,7 +29,7 @@ export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 // Skill zips are larger than knowledge files (GitHub zipballs, ppt-master).
 // Never below the knowledge cap; ceiling matches the Go uncompressed archive cap.
 export const MAX_SKILL_BUNDLE_SIZE_MB = Math.min(
-  512,
+  1024,
   Math.max(
     positiveMegabytes(
       window.__RUNTIME_CONFIG__?.MAX_SKILL_BUNDLE_SIZE_MB
