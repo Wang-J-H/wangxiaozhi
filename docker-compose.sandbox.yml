@@ -1,0 +1,13 @@
+# Docker 沙箱后端 override —— 只在需要跑 Agent Skills / shell_exec 的沙箱时使用。
+#
+# 用法（必须在项目根目录）：
+#   docker compose -f docker-compose.yml -f docker-compose.sandbox.yml --profile neo4j up -d
+#
+# 或直接用仓库根目录的 scripts/dev-sandbox.sh。
+#
+# 风险：挂载 /var/run/docker.sock 等同给 app 容器宿主机 root 权限。
+# 仅用于单机私有化部署；多租户共享主机必须改用 Cube / E2B 隔离。
+services:
+  app:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
